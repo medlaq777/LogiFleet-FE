@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -88,19 +88,20 @@ const Sidebar = ({ isOpen, onClose }) => {
                 {/* User Profile & Logout */}
                 <div className="absolute bottom-0 w-full p-6 border-t border-white/5 bg-[#0A0A0F] space-y-3">
                     {/* User Profile Card */}
-                    <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-[#13131A] to-[#1C1C24] border border-white/5">
-                        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shadow-lg shadow-primary-500/20">
+                    {/* User Profile Card */}
+                    <Link to="/profile" className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-[#13131A] to-[#1C1C24] border border-white/5 hover:border-white/20 transition-all duration-200 cursor-pointer group">
+                        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shadow-lg shadow-primary-500/20 group-hover:scale-105 transition-transform duration-200">
                             {user?.firstName?.charAt(0) || user?.email?.charAt(0)}
                         </div>
                         <div className="overflow-hidden flex-1">
-                            <p className="text-sm font-semibold text-white truncate">
+                            <p className="text-sm font-semibold text-white truncate group-hover:text-primary-400 transition-colors duration-200">
                                 {user?.firstName && user?.lastName
                                     ? `${user.firstName} ${user.lastName}`
                                     : user?.email}
                             </p>
                             <p className="text-xs text-zinc-400 capitalize truncate">{user?.role}</p>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Logout Button */}
                     <button

@@ -28,7 +28,7 @@ const Trucks = () => {
 
     useEffect(() => {
         fetchTrucks();
-    }, [currentPage]); // Re-fetch when page changes
+    }, [currentPage]);
 
     const fetchTrucks = async () => {
         try {
@@ -97,7 +97,7 @@ const Trucks = () => {
         if (window.confirm('Are you sure you want to delete this truck?')) {
             try {
                 await truckService.delete(truck._id);
-                await fetchTrucks(); // Refresh list
+                await fetchTrucks();
             } catch (err) {
                 console.error('Error deleting truck:', err);
                 alert('Failed to delete truck');

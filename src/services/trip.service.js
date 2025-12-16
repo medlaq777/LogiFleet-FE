@@ -21,19 +21,16 @@ const tripService = {
         return response.data;
     },
 
-    // Create new trip (Admin only)
     create: async (tripData) => {
         const response = await apiClient.post('/trip', tripData);
         return response.data;
     },
 
-    // Update trip (Driver can update status)
     update: async (id, tripData) => {
         const response = await apiClient.put(`/trip/${id}`, tripData);
         return response.data;
     },
 
-    // Delete trip
     delete: async (id) => {
         const response = await apiClient.delete(`/trip/${id}`);
         return response.data;

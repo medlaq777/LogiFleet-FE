@@ -15,7 +15,6 @@ const Maintenance = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentRule, setCurrentRule] = useState(null);
 
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
@@ -159,7 +158,6 @@ const Maintenance = () => {
                 <p className="text-zinc-400 text-sm">Configure maintenance rules and view alerts</p>
             </div>
 
-            {/* Tabs */}
             <div className="flex gap-4 mb-6 border-b border-white/10">
                 <button
                     onClick={() => setActiveTab('rules')}
@@ -188,7 +186,6 @@ const Maintenance = () => {
                 </div>
             )}
 
-            {/* Rules Tab */}
             {activeTab === 'rules' && (
                 <div>
                     <Table
@@ -199,7 +196,6 @@ const Maintenance = () => {
                 </div>
             )}
 
-            {/* Alerts Tab */}
             {activeTab === 'alerts' && (
                 <div>
                     {alerts.length === 0 ? (
@@ -224,7 +220,6 @@ const Maintenance = () => {
                 itemsPerPage={limit}
             />
 
-            {/* Edit Rule Modal */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -271,7 +266,7 @@ const Maintenance = () => {
                     </div>
                 </form>
             </Modal>
-        </div>
+        </div >
     );
 };
 

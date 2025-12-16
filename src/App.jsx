@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import Trucks from './pages/Trucks';
 import Trailers from './pages/Trailers';
@@ -33,6 +34,7 @@ function App() {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/trucks" element={<Trucks />} />
             <Route path="/trailers" element={<Trailers />} />
             <Route path="/tires" element={<Tires />} />

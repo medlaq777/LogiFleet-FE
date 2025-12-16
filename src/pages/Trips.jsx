@@ -24,7 +24,6 @@ const Trips = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTrip, setCurrentTrip] = useState(null);
 
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);

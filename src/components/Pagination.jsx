@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPerPage }) => {
-    // Logic to show limited page numbers (e.g. 1 2 3 ... 10)
     const getPageNumbers = () => {
         const delta = 2;
         const range = [];
