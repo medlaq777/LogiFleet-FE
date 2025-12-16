@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-[#0A0A0F] text-white antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Enhanced focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-[#3B82F6] ring-offset-2 ring-offset-[#0A0A0F];
+  }
+}
+
+@layer components {
+
+  /* Premium card style with gradient and glow */
+  .premium-card {
+    @apply bg-gradient-to-br from-[#13131A] to-[#1C1C24] border border-white/5 rounded-2xl shadow-xl;
+  }
+
+  /* Elevated surface */
+  .surface {
+    @apply bg-[#13131A] border border-white/5 rounded-xl;
+  }
+
+  /* Glass effect with backdrop blur */
+  .glass-effect {
+    @apply bg-[#0A0A0F]/80 backdrop-blur-xl border border-white/5;
+  }
+}
+
+@layer utilities {
+
+  /* Display typography using Space Grotesk */
+  .font-display {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Text gradients */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-accent {
+    @apply bg-gradient-to-r from-accent-400 to-accent-600 bg-clip-text text-transparent;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+  }
+}
