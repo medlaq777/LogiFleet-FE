@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
+import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import trailerService from '../services/trailer.service';
@@ -11,6 +12,10 @@ const Trailers = () => {
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTrailer, setCurrentTrailer] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [limit] = useState(5);
     const [formData, setFormData] = useState({
         licensePlate: '',
         make: '',
@@ -21,13 +26,15 @@ const Trailers = () => {
 
     useEffect(() => {
         fetchTrailers();
-    }, []);
+    }, [currentPage]);
 
     const fetchTrailers = async () => {
         try {
             setLoading(true);
-            const response = await trailerService.getAll();
+            const response = await trailerService.getAll(currentPage, limit);
             setTrailers(response.data || []);
+            setTotalItems(response.count || 0);
+            setTotalPages(Math.ceil((response.count || 0) / limit));
             setError('');
         } catch (err) {
             console.error('Error fetching trailers:', err);
@@ -122,7 +129,9 @@ const Trailers = () => {
         <div>
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-3xl font-display font-bold text-white mb-1">Trailers Management</h1>
+                    <h1 className="text-3xl font-display font-bold text-white mb-1">
+                        Trailers Management <span className="text-xl text-primary-500 font-normal">({totalItems} Trailers)</span>
+                    </h1>
                     <p className="text-zinc-400 text-sm">Manage your fleet trailers</p>
                 </div>
                 <button
@@ -145,6 +154,14 @@ const Trailers = () => {
                 data={trailers}
                 onEdit={handleOpenModal}
                 onDelete={handleDelete}
+            />
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={totalItems}
+                itemsPerPage={limit}
             />
 
             <Modal

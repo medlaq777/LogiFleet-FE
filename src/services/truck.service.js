@@ -1,8 +1,8 @@
 import apiClient from '../config/axios';
 
 const truckService = {
-    getAll: async () => {
-        const response = await apiClient.get('/trucks');
+    getAll: async (page = 1, limit = 10) => {
+        const response = await apiClient.get('/trucks', { params: { page, limit } });
         return response.data;
     },
 

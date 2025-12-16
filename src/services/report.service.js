@@ -3,7 +3,7 @@ import apiClient from '../config/axios';
 const reportService = {
     // Get dashboard statistics
     getStatistics: async () => {
-        const response = await apiClient.get('/reports/statistics');
+        const response = await apiClient.get('/reports/stats');
         return response.data;
     },
 

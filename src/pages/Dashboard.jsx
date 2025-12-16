@@ -152,65 +152,94 @@ const DriverDashboard = ({ user }) => {
     );
 };
 
-const AdminDashboard = () => (
-    <div>
-        <div className="mb-8">
-            <h1 className="text-3xl font-display font-bold text-white mb-2">Dashboard Overview</h1>
-            <p className="text-zinc-400">Welcome back, here's what's happening with your fleet today.</p>
-        </div>
+import reportService from '../services/report.service';
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatCard
-                title="Total Trucks"
-                value="12"
-                icon={faTruck}
-                color="from-primary-500 to-primary-600 shadow-primary-500/50"
-                trend={12}
-            />
-            <StatCard
-                title="Total Trailers"
-                value="8"
-                icon={faTrailer}
-                color="from-success-500 to-success-600 shadow-success-500/50"
-                trend={5}
-            />
-            <StatCard
-                title="Active Trips"
-                value="5"
-                icon={faGasPump}
-                color="from-accent-500 to-accent-600 shadow-accent-500/50"
-                trend={-2}
-            />
-            <StatCard
-                title="Maintenance Alerts"
-                value="3"
-                icon={faRing}
-                color="from-error-500 to-error-600 shadow-error-500/50"
-            />
-        </div>
+const AdminDashboard = () => {
+    const [stats, setStats] = useState({
+        totalTrucks: 0,
+        totalTrailers: 0,
+        activeTrips: 0,
+        maintenanceAlerts: 0
+    });
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="premium-card p-8 min-h-[24rem] flex flex-col">
-                <h3 className="text-xl font-display font-semibold text-white mb-8 flex items-center gap-3">
-                    <div className="w-2 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full"></div>
-                    Fuel Consumption Trend
-                </h3>
-                <div className="flex-1 w-full flex items-center justify-center relative">
-                    <FuelChart />
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const response = await reportService.getStatistics();
+                if (response.success) {
+                    setStats(response.data);
+                }
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            }
+        };
+
+        fetchStats();
+    }, []);
+
+    return (
+        <div>
+            <div className="mb-8">
+                <h1 className="text-3xl font-display font-bold text-white mb-2">Dashboard Overview</h1>
+                <p className="text-zinc-400">Welcome back, here's what's happening with your fleet today.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <StatCard
+                    title="Total Trucks"
+                    value={stats.totalTrucks || 0}
+                    icon={faTruck}
+                    color="from-primary-500 to-primary-600 shadow-primary-500/50"
+                />
+                <StatCard
+                    title="Total Trailers"
+                    value={stats.totalTrailers || 0}
+                    icon={faTrailer}
+                    color="from-success-500 to-success-600 shadow-success-500/50"
+                />
+                <StatCard
+                    title="Active Trips"
+                    value={stats.activeTrips || 0}
+                    icon={faGasPump}
+                    color="from-accent-500 to-accent-600 shadow-accent-500/50"
+                />
+                <StatCard
+                    title="Maintenance Alerts"
+                    value={stats.maintenanceAlerts || stats.pendingMaintenance || 0}
+                    icon={faRing}
+                    color="from-error-500 to-error-600 shadow-error-500/50"
+                />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="premium-card p-8 min-h-[24rem] flex flex-col">
+                    <h3 className="text-xl font-display font-semibold text-white mb-8 flex items-center gap-3">
+                        <div className="w-2 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full"></div>
+                        Fuel Consumption Trend
+                    </h3>
+                    <div className="flex-1 w-full flex items-center justify-center relative">
+                        <FuelChart
+                            labels={stats.fuelChart?.labels}
+                            data={stats.fuelChart?.data}
+                        />
+                    </div>
+                </div>
+                <div className="premium-card p-8 min-h-[24rem] flex flex-col">
+                    <h3 className="text-xl font-display font-semibold text-white mb-8 flex items-center gap-3">
+                        <div className="w-2 h-8 bg-gradient-to-b from-accent-500 to-accent-600 rounded-full"></div>
+                        Maintenance Cost Distribution
+                    </h3>
+                    <div className="flex-1 w-full flex items-center justify-center relative">
+                        <MaintenanceChart
+                            labels={stats.maintenanceChart?.labels}
+                            data={stats.maintenanceChart?.data}
+                        />
+                    </div>
                 </div>
             </div>
-            <div className="premium-card p-8 min-h-[24rem] flex flex-col">
-                <h3 className="text-xl font-display font-semibold text-white mb-8 flex items-center gap-3">
-                    <div className="w-2 h-8 bg-gradient-to-b from-accent-500 to-accent-600 rounded-full"></div>
-                    Maintenance Cost Distribution
-                </h3>
-                <div className="flex-1 w-full flex items-center justify-center relative">
-                    <MaintenanceChart />
-                </div>
-            </div>
         </div>
-    </div>
-);
+    );
+};
 
 const Dashboard = () => {
     const { user } = useAuth();

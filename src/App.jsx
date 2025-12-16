@@ -25,8 +25,8 @@ const ProtectedRoute = ({ role }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
 
@@ -41,8 +41,8 @@ function App() {
             {/* Add other routes here later */}
           </Route>
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
+import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import truckService from '../services/truck.service';
@@ -11,6 +12,11 @@ const Trucks = () => {
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTruck, setCurrentTruck] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [limit] = useState(5);
+
     const [formData, setFormData] = useState({
         licensePlate: '',
         make: '',
@@ -22,13 +28,15 @@ const Trucks = () => {
 
     useEffect(() => {
         fetchTrucks();
-    }, []);
+    }, [currentPage]); // Re-fetch when page changes
 
     const fetchTrucks = async () => {
         try {
             setLoading(true);
-            const response = await truckService.getAll();
+            const response = await truckService.getAll(currentPage, limit);
             setTrucks(response.data || []);
+            setTotalItems(response.count || 0);
+            setTotalPages(Math.ceil((response.count || 0) / limit));
             setError('');
         } catch (err) {
             console.error('Error fetching trucks:', err);
@@ -126,7 +134,9 @@ const Trucks = () => {
         <div>
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-3xl font-display font-bold text-white mb-1">Trucks Management</h1>
+                    <h1 className="text-3xl font-display font-bold text-white mb-1">
+                        Trucks Management <span className="text-xl text-primary-500 font-normal">({totalItems} Trucks)</span>
+                    </h1>
                     <p className="text-zinc-400 text-sm">Manage your fleet vehicles</p>
                 </div>
                 <button
@@ -149,6 +159,14 @@ const Trucks = () => {
                 data={trucks}
                 onEdit={handleOpenModal}
                 onDelete={handleDelete}
+            />
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={totalItems}
+                itemsPerPage={limit}
             />
 
             <Modal

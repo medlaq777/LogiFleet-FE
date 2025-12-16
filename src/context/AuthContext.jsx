@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import authService from '../services/auth.service';
 
 const AuthContext = createContext();
@@ -8,6 +9,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Check local storage for existing session
@@ -16,11 +18,21 @@ export const AuthProvider = ({ children }) => {
 
         if (storedUser && token) {
             setUser(JSON.parse(storedUser));
-            // Optionally verify token with backend
-            // fetchProfile();
         }
         setLoading(false);
-    }, []);
+
+        // Listen for unauthorized events (401 from axios)
+        const handleUnauthorized = () => {
+            logout();
+            navigate('/login');
+        };
+
+        window.addEventListener('auth:unauthorized', handleUnauthorized);
+
+        return () => {
+            window.removeEventListener('auth:unauthorized', handleUnauthorized);
+        };
+    }, [navigate]);
 
     const login = async (email, password) => {
         try {
@@ -45,6 +57,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('token');
+        navigate('/login');
     };
 
     const fetchProfile = async () => {

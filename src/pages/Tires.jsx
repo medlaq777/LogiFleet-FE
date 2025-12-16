@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
+import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import tireService from '../services/tire.service';
@@ -11,6 +12,10 @@ const Tires = () => {
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTire, setCurrentTire] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [limit] = useState(5);
     const [formData, setFormData] = useState({
         serialNumber: '',
         brand: '',
@@ -21,13 +26,15 @@ const Tires = () => {
 
     useEffect(() => {
         fetchTires();
-    }, []);
+    }, [currentPage]);
 
     const fetchTires = async () => {
         try {
             setLoading(true);
-            const response = await tireService.getAll();
+            const response = await tireService.getAll(currentPage, limit);
             setTires(response.data || []);
+            setTotalItems(response.count || 0);
+            setTotalPages(Math.ceil((response.count || 0) / limit));
             setError('');
         } catch (err) {
             console.error('Error fetching tires:', err);
@@ -126,7 +133,9 @@ const Tires = () => {
         <div>
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-3xl font-display font-bold text-white mb-1">Tires Management</h1>
+                    <h1 className="text-3xl font-display font-bold text-white mb-1">
+                        Tires Management <span className="text-xl text-primary-500 font-normal">({totalItems} Tires)</span>
+                    </h1>
                     <p className="text-zinc-400 text-sm">Track and manage tire inventory</p>
                 </div>
                 <button
@@ -149,6 +158,14 @@ const Tires = () => {
                 data={tires}
                 onEdit={handleOpenModal}
                 onDelete={handleDelete}
+            />
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={totalItems}
+                itemsPerPage={limit}
             />
 
             <Modal

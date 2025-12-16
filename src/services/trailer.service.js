@@ -2,8 +2,9 @@ import apiClient from '../config/axios';
 
 const trailerService = {
     // Get all trailers
-    getAll: async () => {
-        const response = await apiClient.get('/trailers');
+    // Get all trailers
+    getAll: async (page = 1, limit = 10) => {
+        const response = await apiClient.get('/trailers', { params: { page, limit } });
         return response.data;
     },
 

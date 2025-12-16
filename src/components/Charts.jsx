@@ -67,7 +67,7 @@ const commonOptions = {
     },
 };
 
-export const FuelChart = () => {
+export const FuelChart = ({ labels, data: chartData }) => {
     const options = {
         ...commonOptions,
         plugins: {
@@ -79,11 +79,11 @@ export const FuelChart = () => {
     };
 
     const data = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        labels: labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [
             {
                 label: 'Fuel Consumption (L)',
-                data: [1200, 1900, 1500, 2100, 1800, 2300],
+                data: chartData || [1200, 1900, 1500, 2100, 1800, 2300],
                 borderColor: '#3B82F6',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 tension: 0.4,
@@ -100,7 +100,7 @@ export const FuelChart = () => {
     return <Line options={options} data={data} />;
 };
 
-export const MaintenanceChart = () => {
+export const MaintenanceChart = ({ labels, data: chartData }) => {
     const options = {
         responsive: true,
         maintainAspectRatio: true,
@@ -122,11 +122,11 @@ export const MaintenanceChart = () => {
     };
 
     const data = {
-        labels: ['Tires', 'Oil Change', 'Repairs', 'Inspection'],
+        labels: labels || ['Tires', 'Oil Change', 'Repairs', 'Inspection'],
         datasets: [
             {
                 label: 'Costs (€)',
-                data: [500, 300, 1200, 200],
+                data: chartData || [500, 300, 1200, 200],
                 backgroundColor: [
                     'rgba(59, 130, 246, 0.8)',
                     'rgba(245, 158, 11, 0.8)',

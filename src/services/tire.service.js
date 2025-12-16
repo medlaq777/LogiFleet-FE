@@ -2,8 +2,9 @@ import apiClient from '../config/axios';
 
 const tireService = {
     // Get all tires
-    getAll: async () => {
-        const response = await apiClient.get('/tires');
+    // Get all tires
+    getAll: async (page = 1, limit = 10) => {
+        const response = await apiClient.get('/tires', { params: { page, limit } });
         return response.data;
     },
 

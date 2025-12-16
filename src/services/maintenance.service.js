@@ -2,14 +2,18 @@ import apiClient from '../config/axios';
 
 const maintenanceService = {
     // Get all maintenance rules
-    getRules: async () => {
-        const response = await apiClient.get('/maintenance/rules');
+    getRules: async (page = 1, limit = 5) => {
+        const response = await apiClient.get('/maintenance/rules', {
+            params: { page, limit }
+        });
         return response.data;
     },
 
     // Get all alerts
-    getAlerts: async () => {
-        const response = await apiClient.get('/maintenance/alerts');
+    getAlerts: async (page = 1, limit = 5) => {
+        const response = await apiClient.get('/maintenance/alerts', {
+            params: { page, limit }
+        });
         return response.data;
     },
 

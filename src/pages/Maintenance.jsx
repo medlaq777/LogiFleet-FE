@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faEdit } from '@fortawesome/free-solid-svg-icons';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
+import Pagination from '../components/Pagination';
 import maintenanceService from '../services/maintenance.service';
 
 const Maintenance = () => {
@@ -13,24 +14,39 @@ const Maintenance = () => {
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentRule, setCurrentRule] = useState(null);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [limit] = useState(5);
+
     const [formData, setFormData] = useState({
         type: '',
         intervalKm: 0
     });
 
     useEffect(() => {
-        fetchData();
+        setCurrentPage(1); // Reset page when tab changes
     }, [activeTab]);
+
+    useEffect(() => {
+        fetchData();
+    }, [activeTab, currentPage]);
 
     const fetchData = async () => {
         try {
             setLoading(true);
             if (activeTab === 'rules') {
-                const response = await maintenanceService.getRules();
+                const response = await maintenanceService.getRules(currentPage, limit);
                 setRules(response.data || []);
+                setTotalItems(response.count || 0);
+                setTotalPages(Math.ceil((response.count || 0) / limit));
             } else {
-                const response = await maintenanceService.getAlerts();
+                const response = await maintenanceService.getAlerts(currentPage, limit);
                 setAlerts(response.data || []);
+                setTotalItems(response.count || 0);
+                setTotalPages(Math.ceil((response.count || 0) / limit));
             }
             setError('');
         } catch (err) {
@@ -134,7 +150,12 @@ const Maintenance = () => {
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-display font-bold text-white mb-1">Maintenance Management</h1>
+                <h1 className="text-3xl font-display font-bold text-white mb-1">
+                    Maintenance Management
+                    <span className="text-xl text-primary-500 font-normal ml-2">
+                        ({totalItems} {activeTab === 'rules' ? 'Rules' : 'Alerts'})
+                    </span>
+                </h1>
                 <p className="text-zinc-400 text-sm">Configure maintenance rules and view alerts</p>
             </div>
 
@@ -143,8 +164,8 @@ const Maintenance = () => {
                 <button
                     onClick={() => setActiveTab('rules')}
                     className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${activeTab === 'rules'
-                            ? 'text-primary-400 border-primary-500'
-                            : 'text-zinc-400 border-transparent hover:text-white'
+                        ? 'text-primary-400 border-primary-500'
+                        : 'text-zinc-400 border-transparent hover:text-white'
                         }`}
                 >
                     Maintenance Rules
@@ -152,12 +173,12 @@ const Maintenance = () => {
                 <button
                     onClick={() => setActiveTab('alerts')}
                     className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 flex items-center gap-2 ${activeTab === 'alerts'
-                            ? 'text-warning-400 border-warning-500'
-                            : 'text-zinc-400 border-transparent hover:text-white'
+                        ? 'text-warning-400 border-warning-500'
+                        : 'text-zinc-400 border-transparent hover:text-white'
                         }`}
                 >
                     <FontAwesomeIcon icon={faExclamationTriangle} />
-                    Alerts {alerts.length > 0 && `(${alerts.length})`}
+                    Alerts
                 </button>
             </div>
 
@@ -194,6 +215,14 @@ const Maintenance = () => {
                     )}
                 </div>
             )}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={totalItems}
+                itemsPerPage={limit}
+            />
 
             {/* Edit Rule Modal */}
             <Modal

@@ -4,6 +4,7 @@ import Table from '../components/Table';
 import Modal from '../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import Pagination from '../components/Pagination';
 import tripService from '../services/trip.service';
 import truckService from '../services/truck.service';
 import trailerService from '../services/trailer.service';
@@ -17,10 +18,18 @@ const Trips = () => {
     const [trucks, setTrucks] = useState([]);
     const [trailers, setTrailers] = useState([]);
     const [drivers, setDrivers] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTrip, setCurrentTrip] = useState(null);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [limit] = useState(5);
+
     const [formData, setFormData] = useState({
         user: '',
         truck: '',
@@ -41,15 +50,20 @@ const Trips = () => {
         if (isAdmin) {
             fetchTrucksAndTrailers();
         }
-    }, [isAdmin]);
+    }, [isAdmin, currentPage]);
 
     const fetchTrips = async () => {
         try {
             setLoading(true);
             const response = isAdmin
-                ? await tripService.getAll()
+                ? await tripService.getAll(currentPage, limit)
                 : await tripService.getMyTrips();
+
             setTrips(response.data || []);
+            setTotalItems(response.count || 0);
+            if (isAdmin) {
+                setTotalPages(Math.ceil((response.count || 0) / limit));
+            }
             setError('');
         } catch (err) {
             console.error('Error fetching trips:', err);
@@ -219,6 +233,7 @@ const Trips = () => {
                 <div>
                     <h1 className="text-3xl font-display font-bold text-white mb-1">
                         {isAdmin ? 'Trips Management' : 'My Trips'}
+                        {isAdmin && <span className="text-xl text-primary-500 font-normal ml-2">({totalItems} Trips)</span>}
                     </h1>
                     <p className="text-zinc-400 text-sm">
                         {isAdmin ? 'Manage all fleet trips' : 'View and manage your assigned trips'}
@@ -247,6 +262,16 @@ const Trips = () => {
                 onEdit={isAdmin ? handleOpenModal : undefined}
                 onDelete={isAdmin ? handleDelete : undefined}
             />
+
+            {isAdmin && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    totalItems={totalItems}
+                    itemsPerPage={limit}
+                />
+            )}
 
             {isAdmin && (
                 <Modal
