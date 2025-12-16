@@ -27,7 +27,7 @@ const Trailers = () => {
         try {
             setLoading(true);
             const response = await trailerService.getAll();
-            setTrailers(response.data);
+            setTrailers(response.data || []);
             setError('');
         } catch (err) {
             console.error('Error fetching trailers:', err);

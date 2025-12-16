@@ -28,7 +28,7 @@ const Trucks = () => {
         try {
             setLoading(true);
             const response = await truckService.getAll();
-            setTrucks(response.data);
+            setTrucks(response.data || []);
             setError('');
         } catch (err) {
             console.error('Error fetching trucks:', err);

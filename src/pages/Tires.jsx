@@ -27,11 +27,12 @@ const Tires = () => {
         try {
             setLoading(true);
             const response = await tireService.getAll();
-            setTires(response.data);
+            setTires(response.data || []);
             setError('');
         } catch (err) {
             console.error('Error fetching tires:', err);
-            setError('Failed to load tires');
+            const errorMsg = err.response?.data?.message || 'Failed to load tires';
+            setError(errorMsg);
         } finally {
             setLoading(false);
         }
