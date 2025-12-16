@@ -3,7 +3,7 @@ import Table from '../components/Table';
 import Modal from '../components/Modal';
 import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import truckService from '../services/truck.service';
 
 const Trucks = () => {
@@ -16,6 +16,7 @@ const Trucks = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [limit] = useState(5);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [formData, setFormData] = useState({
         licensePlate: '',
@@ -122,6 +123,12 @@ const Trucks = () => {
         }
     };
 
+    const filteredTrucks = trucks.filter(truck => {
+        return (truck.licensePlate?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+            (truck.make?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+            (truck.model?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+    });
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -148,6 +155,20 @@ const Trucks = () => {
                 </button>
             </div>
 
+            {/* Filters */}
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="relative flex-1">
+                    <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
+                    <input
+                        type="text"
+                        placeholder="Search trucks..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-[#13131A] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-primary-500 transition-colors"
+                    />
+                </div>
+            </div>
+
             {error && (
                 <div className="bg-error-500/10 border border-error-500/50 text-error-400 p-4 rounded-xl mb-6 text-sm">
                     {error}
@@ -156,7 +177,7 @@ const Trucks = () => {
 
             <Table
                 columns={columns}
-                data={trucks}
+                data={filteredTrucks}
                 onEdit={handleOpenModal}
                 onDelete={handleDelete}
             />

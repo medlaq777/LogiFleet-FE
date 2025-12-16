@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
+import Users from './pages/Users';
 import Trucks from './pages/Trucks';
 import Trailers from './pages/Trailers';
 import Tires from './pages/Tires';
@@ -40,7 +41,12 @@ function App() {
             <Route path="/tires" element={<Tires />} />
             <Route path="/trips" element={<Trips />} />
             <Route path="/maintenance" element={<Maintenance />} />
-            {/* Add other routes here later */}
+
+          </Route>
+
+          {/* Admin Only Routes */}
+          <Route element={<ProtectedRoute role="Admin" />}>
+            <Route path="/users" element={<Users />} />
           </Route>
         </Routes>
       </AuthProvider>

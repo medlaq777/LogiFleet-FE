@@ -11,16 +11,6 @@ const Navbar = ({ onMenuClick }) => {
                 >
                     <FontAwesomeIcon icon={faBars} className="text-xl" />
                 </button>
-
-                {/* Enhanced Search Bar with expand animation */}
-                <div className="hidden md:flex items-center relative group">
-                    <FontAwesomeIcon icon={faSearch} className="absolute left-4 text-zinc-500 group-focus-within:text-primary-400 transition-colors duration-200" />
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="bg-[#1C1C24] border border-white/10 rounded-xl py-2.5 pl-11 pr-4 w-80 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:w-96 transition-all duration-300"
-                    />
-                </div>
             </div>
 
             <div className="flex items-center space-x-6">

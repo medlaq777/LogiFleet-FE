@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle, faEdit, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
 import Pagination from '../components/Pagination';
@@ -19,6 +19,7 @@ const Maintenance = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [limit] = useState(5);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [formData, setFormData] = useState({
         type: '',
@@ -27,6 +28,7 @@ const Maintenance = () => {
 
     useEffect(() => {
         setCurrentPage(1); // Reset page when tab changes
+        setSearchTerm(''); // Reset search
     }, [activeTab]);
 
     useEffect(() => {
@@ -138,6 +140,12 @@ const Maintenance = () => {
         }
     };
 
+    const filteredAlerts = alerts.filter(alert => {
+        return (alert.type?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+            (alert.message?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+            (alert.truckId?.licensePlate?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+    });
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -180,6 +188,22 @@ const Maintenance = () => {
                 </button>
             </div>
 
+            {/* Search Filter - Only for Alerts */}
+            {activeTab === 'alerts' && (
+                <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    <div className="relative flex-1">
+                        <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
+                        <input
+                            type="text"
+                            placeholder="Search alerts..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-[#13131A] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-primary-500 transition-colors"
+                        />
+                    </div>
+                </div>
+            )}
+
             {error && (
                 <div className="bg-error-500/10 border border-error-500/50 text-error-400 p-4 rounded-xl mb-6 text-sm">
                     {error}
@@ -198,7 +222,7 @@ const Maintenance = () => {
 
             {activeTab === 'alerts' && (
                 <div>
-                    {alerts.length === 0 ? (
+                    {filteredAlerts.length === 0 ? (
                         <div className="premium-card p-8 text-center text-zinc-400">
                             <FontAwesomeIcon icon={faExclamationTriangle} className="text-4xl mb-3 text-zinc-500" />
                             <p>No maintenance alerts at this time</p>
@@ -206,7 +230,7 @@ const Maintenance = () => {
                     ) : (
                         <Table
                             columns={alertsColumns}
-                            data={alerts}
+                            data={filteredAlerts}
                         />
                     )}
                 </div>

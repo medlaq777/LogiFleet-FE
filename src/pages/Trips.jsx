@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faFilePdf, faSearch, faPlay, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import Pagination from '../components/Pagination';
 import tripService from '../services/trip.service';
 import truckService from '../services/truck.service';
@@ -28,6 +28,7 @@ const Trips = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [limit] = useState(5);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [formData, setFormData] = useState({
         user: '',
@@ -88,6 +89,33 @@ const Trips = () => {
         }
     };
 
+    const handleStatusChange = async (tripId, newStatus) => {
+        try {
+            await tripService.update(tripId, { status: newStatus });
+            await fetchTrips();
+        } catch (err) {
+            console.error('Error updating status:', err);
+            alert('Failed to update trip status');
+        }
+    };
+
+    const handleDownloadPDF = async (tripId) => {
+        try {
+            const blob = await tripService.downloadPDF(tripId);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `mission-${tripId}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Error downloading PDF:', err);
+            alert('Failed to download PDF');
+        }
+    };
+
     const columns = [
         {
             header: 'Driver',
@@ -135,6 +163,38 @@ const Trips = () => {
                 </span>
             )
         },
+        ...(!isAdmin ? [{
+            header: 'Actions',
+            render: (trip) => (
+                <div className="flex items-center gap-2">
+                    {trip.status === 'À faire' && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); handleStatusChange(trip._id, 'En cours'); }}
+                            className="bg-primary-500/20 text-primary-400 p-2 rounded-lg hover:bg-primary-500/30 transition-colors"
+                            title="Start Trip"
+                        >
+                            <FontAwesomeIcon icon={faPlay} />
+                        </button>
+                    )}
+                    {trip.status === 'En cours' && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); handleStatusChange(trip._id, 'Terminée'); }}
+                            className="bg-success-500/20 text-success-400 p-2 rounded-lg hover:bg-success-500/30 transition-colors"
+                            title="Complete Trip"
+                        >
+                            <FontAwesomeIcon icon={faCheckCircle} />
+                        </button>
+                    )}
+                    <button
+                        onClick={(e) => { e.stopPropagation(); handleDownloadPDF(trip._id); }}
+                        className="bg-white/5 text-zinc-400 p-2 rounded-lg hover:bg-white/10 hover:text-white transition-colors"
+                        title="Download PDF"
+                    >
+                        <FontAwesomeIcon icon={faFilePdf} />
+                    </button>
+                </div>
+            )
+        }] : [])
     ];
 
     const handleOpenModal = (trip = null) => {
@@ -201,22 +261,14 @@ const Trips = () => {
         }
     };
 
-    const handleDownloadPDF = async (tripId) => {
-        try {
-            const blob = await tripService.downloadPDF(tripId);
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `mission-${tripId}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-        } catch (err) {
-            console.error('Error downloading PDF:', err);
-            alert('Failed to download PDF');
-        }
-    };
+    const filteredTrips = trips.filter(trip => {
+        const search = searchTerm.toLowerCase();
+        return (trip.departureLocation?.toLowerCase() || '').includes(search) ||
+            (trip.arrivalLocation?.toLowerCase() || '').includes(search) ||
+            (trip.truckId?.licensePlate?.toLowerCase() || '').includes(search) ||
+            (trip.driverId?.firstName?.toLowerCase() || '').includes(search) ||
+            (trip.driverId?.lastName?.toLowerCase() || '').includes(search);
+    });
 
     if (loading) {
         return (
@@ -249,6 +301,20 @@ const Trips = () => {
                 )}
             </div>
 
+            {/* Filters */}
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="relative flex-1">
+                    <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
+                    <input
+                        type="text"
+                        placeholder="Search trips..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-[#13131A] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-primary-500 transition-colors"
+                    />
+                </div>
+            </div>
+
             {error && (
                 <div className="bg-error-500/10 border border-error-500/50 text-error-400 p-4 rounded-xl mb-6 text-sm">
                     {error}
@@ -257,7 +323,7 @@ const Trips = () => {
 
             <Table
                 columns={columns}
-                data={trips}
+                data={filteredTrips}
                 onEdit={isAdmin ? handleOpenModal : undefined}
                 onDelete={isAdmin ? handleDelete : undefined}
             />

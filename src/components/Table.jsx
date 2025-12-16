@@ -13,13 +13,15 @@ const Table = ({ columns, data, onEdit, onDelete }) => {
                                     {col.header}
                                 </th>
                             ))}
-                            <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Actions</th>
+                            {(onEdit || onDelete) && (
+                                <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-widest text-right">Actions</th>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
                         {data.length === 0 ? (
                             <tr>
-                                <td colSpan={columns.length + 1} className="p-12 text-center">
+                                <td colSpan={columns.length + (onEdit || onDelete ? 1 : 0)} className="p-12 text-center">
                                     <div className="flex flex-col items-center gap-3">
                                         <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
                                             <svg className="w-8 h-8 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,24 +40,30 @@ const Table = ({ columns, data, onEdit, onDelete }) => {
                                             {col.render ? col.render(item) : item[col.accessor]}
                                         </td>
                                     ))}
-                                    <td className="px-6 py-5 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <button
-                                                onClick={() => onEdit(item)}
-                                                className="text-primary-400 hover:text-primary-300 p-2.5 hover:bg-primary-500/10 rounded-lg transition-all duration-200"
-                                                title="Edit"
-                                            >
-                                                <FontAwesomeIcon icon={faEdit} />
-                                            </button>
-                                            <button
-                                                onClick={() => onDelete(item)}
-                                                className="text-error-400 hover:text-error-300 p-2.5 hover:bg-error-500/10 rounded-lg transition-all duration-200"
-                                                title="Delete"
-                                            >
-                                                <FontAwesomeIcon icon={faTrash} />
-                                            </button>
-                                        </div>
-                                    </td>
+                                    {(onEdit || onDelete) && (
+                                        <td className="px-6 py-5 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                {onEdit && (
+                                                    <button
+                                                        onClick={() => onEdit(item)}
+                                                        className="text-primary-400 hover:text-primary-300 p-2.5 hover:bg-primary-500/10 rounded-lg transition-all duration-200"
+                                                        title="Edit"
+                                                    >
+                                                        <FontAwesomeIcon icon={faEdit} />
+                                                    </button>
+                                                )}
+                                                {onDelete && (
+                                                    <button
+                                                        onClick={() => onDelete(item)}
+                                                        className="text-error-400 hover:text-error-300 p-2.5 hover:bg-error-500/10 rounded-lg transition-all duration-200"
+                                                        title="Delete"
+                                                    >
+                                                        <FontAwesomeIcon icon={faTrash} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    )}
                                 </tr>
                             ))
                         )}
