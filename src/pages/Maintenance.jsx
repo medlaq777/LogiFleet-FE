@@ -1,153 +1,243 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationTriangle, faEdit } from '@fortawesome/free-solid-svg-icons';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import maintenanceService from '../services/maintenance.service';
 
 const Maintenance = () => {
-    const [alerts, setAlerts] = useState([
-        { id: 1, vehicle: 'AA-123-BB', type: 'Oil Change', status: 'Overdue', date: '2023-10-20' },
-        { id: 2, vehicle: 'CC-456-DD', type: 'Tire Rotation', status: 'Pending', date: '2023-11-01' },
-    ]);
-
+    const [activeTab, setActiveTab] = useState('rules');
+    const [rules, setRules] = useState([]);
+    const [alerts, setAlerts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentAlert, setCurrentAlert] = useState(null);
-    const [formData, setFormData] = useState({ vehicle: '', type: '', status: 'Pending', date: '' });
+    const [currentRule, setCurrentRule] = useState(null);
+    const [formData, setFormData] = useState({
+        type: '',
+        intervalKm: 0
+    });
 
-    const columns = [
-        { header: 'Vehicle', accessor: 'vehicle' },
-        { header: 'Type', accessor: 'type' },
-        { header: 'Due Date', accessor: 'date' },
+    useEffect(() => {
+        fetchData();
+    }, [activeTab]);
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            if (activeTab === 'rules') {
+                const response = await maintenanceService.getRules();
+                setRules(response.data || []);
+            } else {
+                const response = await maintenanceService.getAlerts();
+                setAlerts(response.data || []);
+            }
+            setError('');
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            const errorMsg = err.response?.data?.message || 'Failed to load data';
+            setError(errorMsg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const rulesColumns = [
         {
-            header: 'Status',
-            accessor: 'status',
+            header: 'Maintenance Type',
+            accessor: 'type',
             render: (item) => (
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center w-fit
-          ${item.status === 'Pending' ? 'bg-yellow-900/30 text-yellow-400' :
-                        item.status === 'Overdue' ? 'bg-red-900/30 text-red-400' :
-                            'bg-green-900/30 text-green-400'
-                    }
-        `}>
-                    {item.status === 'Overdue' && <FontAwesomeIcon icon={faExclamationTriangle} className="mr-1" />}
-                    {item.status}
-                </span>
+                <div className="font-semibold text-white">{item.type}</div>
+            )
+        },
+        {
+            header: 'Interval (km)',
+            accessor: 'intervalKm',
+            render: (item) => (
+                <div className="text-zinc-300">
+                    {item.intervalKm?.toLocaleString()} km
+                </div>
             )
         },
     ];
 
-    const handleOpenModal = (alert = null) => {
-        if (alert) {
-            setCurrentAlert(alert);
-            setFormData(alert);
-        } else {
-            setCurrentAlert(null);
-            setFormData({ vehicle: '', type: '', status: 'Pending', date: '' });
-        }
+    const alertsColumns = [
+        {
+            header: 'Truck',
+            render: (item) => (
+                <div>
+                    <div className="font-semibold text-white">
+                        {item.truckId?.licensePlate || 'N/A'}
+                    </div>
+                    <div className="text-xs text-zinc-400">
+                        {item.truckId?.make} {item.truckId?.model}
+                    </div>
+                </div>
+            )
+        },
+        {
+            header: 'Type',
+            accessor: 'type',
+            render: (item) => (
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-warning-500/10 text-warning-400 border border-warning-500/20">
+                    {item.type}
+                </span>
+            )
+        },
+        {
+            header: 'Message',
+            accessor: 'message',
+            render: (item) => (
+                <div className="text-zinc-300">{item.message}</div>
+            )
+        },
+        {
+            header: 'Date',
+            render: (item) => (
+                <div className="text-zinc-400 text-sm">
+                    {new Date(item.createdAt).toLocaleDateString()}
+                </div>
+            )
+        },
+    ];
+
+    const handleOpenModal = (rule) => {
+        setCurrentRule(rule);
+        setFormData({
+            type: rule.type,
+            intervalKm: rule.intervalKm
+        });
         setIsModalOpen(true);
     };
 
-    const handleDelete = (alert) => {
-        if (window.confirm('Are you sure you want to delete this alert?')) {
-            setAlerts(alerts.filter(a => a.id !== alert.id));
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await maintenanceService.updateRule(currentRule._id, formData);
+            setIsModalOpen(false);
+            await fetchData();
+        } catch (err) {
+            console.error('Error updating rule:', err);
+            const errorMessage = err.response?.data?.message || 'Failed to update rule';
+            alert(errorMessage);
         }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (currentAlert) {
-            setAlerts(alerts.map(a => a.id === currentAlert.id ? { ...formData, id: a.id } : a));
-        } else {
-            setAlerts([...alerts, { ...formData, id: Date.now() }]);
-        }
-        setIsModalOpen(false);
-    };
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-white text-lg">Loading...</div>
+            </div>
+        );
+    }
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-white">Maintenance Alerts</h1>
+            <div className="mb-8">
+                <h1 className="text-3xl font-display font-bold text-white mb-1">Maintenance Management</h1>
+                <p className="text-zinc-400 text-sm">Configure maintenance rules and view alerts</p>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex gap-4 mb-6 border-b border-white/10">
                 <button
-                    onClick={() => handleOpenModal()}
-                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center"
+                    onClick={() => setActiveTab('rules')}
+                    className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${activeTab === 'rules'
+                            ? 'text-primary-400 border-primary-500'
+                            : 'text-zinc-400 border-transparent hover:text-white'
+                        }`}
                 >
-                    <FontAwesomeIcon icon={faPlus} className="mr-2" />
-                    Add Alert
+                    Maintenance Rules
+                </button>
+                <button
+                    onClick={() => setActiveTab('alerts')}
+                    className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 flex items-center gap-2 ${activeTab === 'alerts'
+                            ? 'text-warning-400 border-warning-500'
+                            : 'text-zinc-400 border-transparent hover:text-white'
+                        }`}
+                >
+                    <FontAwesomeIcon icon={faExclamationTriangle} />
+                    Alerts {alerts.length > 0 && `(${alerts.length})`}
                 </button>
             </div>
 
-            <Table
-                columns={columns}
-                data={alerts}
-                onEdit={handleOpenModal}
-                onDelete={handleDelete}
-            />
+            {error && (
+                <div className="bg-error-500/10 border border-error-500/50 text-error-400 p-4 rounded-xl mb-6 text-sm">
+                    {error}
+                </div>
+            )}
 
+            {/* Rules Tab */}
+            {activeTab === 'rules' && (
+                <div>
+                    <Table
+                        columns={rulesColumns}
+                        data={rules}
+                        onEdit={handleOpenModal}
+                    />
+                </div>
+            )}
+
+            {/* Alerts Tab */}
+            {activeTab === 'alerts' && (
+                <div>
+                    {alerts.length === 0 ? (
+                        <div className="premium-card p-8 text-center text-zinc-400">
+                            <FontAwesomeIcon icon={faExclamationTriangle} className="text-4xl mb-3 text-zinc-500" />
+                            <p>No maintenance alerts at this time</p>
+                        </div>
+                    ) : (
+                        <Table
+                            columns={alertsColumns}
+                            data={alerts}
+                        />
+                    )}
+                </div>
+            )}
+
+            {/* Edit Rule Modal */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                title={currentAlert ? 'Edit Alert' : 'Create Maintenance Alert'}
+                title="Edit Maintenance Rule"
             >
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Vehicle</label>
+                        <label className="block text-sm font-semibold text-zinc-300 mb-2">Maintenance Type</label>
                         <input
                             type="text"
-                            value={formData.vehicle}
-                            onChange={(e) => setFormData({ ...formData, vehicle: e.target.value })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Type</label>
-                        <select
                             value={formData.type}
-                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
-                            required
-                        >
-                            <option value="">Select Type</option>
-                            <option value="Oil Change">Oil Change</option>
-                            <option value="Tire Rotation">Tire Rotation</option>
-                            <option value="Inspection">Inspection</option>
-                            <option value="Repair">Repair</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Due Date</label>
-                        <input
-                            type="date"
-                            value={formData.date}
-                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
-                            required
+                            className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-zinc-400 cursor-not-allowed"
+                            disabled
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Status</label>
-                        <select
-                            value={formData.status}
-                            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
-                        >
-                            <option value="Pending">Pending</option>
-                            <option value="Overdue">Overdue</option>
-                            <option value="Completed">Completed</option>
-                        </select>
+                        <label className="block text-sm font-semibold text-zinc-300 mb-2">Interval (km)</label>
+                        <input
+                            type="number"
+                            value={formData.intervalKm}
+                            onChange={(e) => setFormData({ ...formData, intervalKm: parseInt(e.target.value) })}
+                            className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                            min="1"
+                            required
+                        />
+                        <p className="text-xs text-zinc-500 mt-2">
+                            Maintenance will be triggered every {formData.intervalKm?.toLocaleString()} kilometers
+                        </p>
                     </div>
-                    <div className="flex justify-end pt-4">
+                    <div className="flex justify-end gap-3 pt-6 border-t border-white/5">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="mr-3 px-4 py-2 text-gray-400 hover:text-white transition-colors"
+                            className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl border border-white/10 hover:border-white/20 transition-all duration-200"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-colors"
+                            className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-200 hover:-translate-y-0.5"
                         >
-                            Save
+                            Update Rule
                         </button>
                     </div>
                 </form>

@@ -14,8 +14,8 @@ const maintenanceService = {
     },
 
     // Update maintenance rule
-    updateRule: async (ruleData) => {
-        const response = await apiClient.put('/maintenance/rules', ruleData);
+    updateRule: async (id, ruleData) => {
+        const response = await apiClient.put(`/maintenance/rules/${id}`, ruleData);
         return response.data;
     },
 };

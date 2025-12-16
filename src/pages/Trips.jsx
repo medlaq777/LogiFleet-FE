@@ -1,52 +1,121 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faFilePdf } from '@fortawesome/free-solid-svg-icons';
-import jsPDF from 'jspdf';
+import tripService from '../services/trip.service';
+import truckService from '../services/truck.service';
+import trailerService from '../services/trailer.service';
+import userService from '../services/user.service';
 
 const Trips = () => {
-    const [trips, setTrips] = useState([
-        {
-            id: 1,
-            driver: 'John Driver',
-            truck: 'AA-123-BB',
-            trailer: 'TR-101-XX',
-            route: 'Paris - Lyon',
-            date: '2023-10-25',
-            status: 'To Do'
-        },
-        {
-            id: 2,
-            driver: 'Jane Doe',
-            truck: 'CC-456-DD',
-            trailer: 'TR-202-YY',
-            route: 'Marseille - Nice',
-            date: '2023-10-26',
-            status: 'In Progress'
-        },
-    ]);
+    const { user } = useAuth();
+    const isAdmin = user?.role?.toLowerCase() === 'admin';
 
+    const [trips, setTrips] = useState([]);
+    const [trucks, setTrucks] = useState([]);
+    const [trailers, setTrailers] = useState([]);
+    const [drivers, setDrivers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTrip, setCurrentTrip] = useState(null);
     const [formData, setFormData] = useState({
-        driver: '', truck: '', trailer: '', route: '', date: '', status: 'To Do'
+        user: '',
+        truck: '',
+        trailer: '',
+        departureLocation: '',
+        arrivalLocation: '',
+        departureDate: '',
+        status: 'À faire',
+        mileageStart: 0,
+        mileageEnd: 0,
+        fuelStart: 0,
+        fuelEnd: 0,
+        notes: ''
     });
 
+    useEffect(() => {
+        fetchTrips();
+        if (isAdmin) {
+            fetchTrucksAndTrailers();
+        }
+    }, [isAdmin]);
+
+    const fetchTrips = async () => {
+        try {
+            setLoading(true);
+            const response = isAdmin
+                ? await tripService.getAll()
+                : await tripService.getMyTrips();
+            setTrips(response.data || []);
+            setError('');
+        } catch (err) {
+            console.error('Error fetching trips:', err);
+            const errorMsg = err.response?.data?.message || 'Failed to load trips';
+            setError(errorMsg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchTrucksAndTrailers = async () => {
+        try {
+            const [trucksRes, trailersRes, driversRes] = await Promise.all([
+                truckService.getAll(),
+                trailerService.getAll(),
+                userService.getDrivers()
+            ]);
+            setTrucks(trucksRes.data || []);
+            setTrailers(trailersRes.data || []);
+            setDrivers(driversRes.data || []);
+        } catch (err) {
+            console.error('Error fetching trucks/trailers:', err);
+        }
+    };
+
     const columns = [
-        { header: 'Driver', accessor: 'driver' },
-        { header: 'Truck', accessor: 'truck' },
-        { header: 'Trailer', accessor: 'trailer' },
-        { header: 'Route', accessor: 'route' },
-        { header: 'Date', accessor: 'date' },
+        {
+            header: 'Driver',
+            render: (item) => (
+                <div>
+                    <div className="font-semibold text-white">
+                        {item.driverId?.firstName} {item.driverId?.lastName}
+                    </div>
+                    <div className="text-xs text-zinc-400">{item.driverId?.email}</div>
+                </div>
+            )
+        },
+        {
+            header: 'Departure',
+            accessor: 'departureLocation',
+            render: (item) => (
+                <div>
+                    <div className="font-semibold text-white">{item.departureLocation}</div>
+                    <div className="text-xs text-zinc-400">
+                        {item.startDate ? new Date(item.startDate).toLocaleDateString() : 'N/A'}
+                    </div>
+                </div>
+            )
+        },
+        { header: 'Arrival', accessor: 'arrivalLocation' },
+        {
+            header: 'Truck',
+            render: (item) => item.truckId?.licensePlate || 'N/A'
+        },
+        {
+            header: 'Trailer',
+            render: (item) => item.trailerId?.licensePlate || 'N/A'
+        },
         {
             header: 'Status',
             accessor: 'status',
             render: (item) => (
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold
-          ${item.status === 'To Do' ? 'bg-gray-700 text-gray-300' :
-                        item.status === 'In Progress' ? 'bg-blue-900/30 text-blue-400' :
-                            'bg-green-900/30 text-green-400'
+                <span className={`px-3 py-1.5 rounded-full text-xs font-semibold border
+          ${item.status === 'À faire' ? 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20' :
+                        item.status === 'En cours' ? 'bg-primary-500/10 text-primary-400 border-primary-500/20' :
+                            'bg-success-500/10 text-success-400 border-success-500/20'
                     }
         `}>
                     {item.status}
@@ -58,143 +127,256 @@ const Trips = () => {
     const handleOpenModal = (trip = null) => {
         if (trip) {
             setCurrentTrip(trip);
-            setFormData(trip);
+            setFormData({
+                driverId: typeof trip.driverId === 'object' ? trip.driverId?._id : trip.driverId || '',
+                truckId: typeof trip.truckId === 'object' ? trip.truckId?._id : trip.truckId || '',
+                trailerId: typeof trip.trailerId === 'object' ? trip.trailerId?._id : trip.trailerId || '',
+                departureLocation: trip.departureLocation || '',
+                arrivalLocation: trip.arrivalLocation || '',
+                startDate: trip.startDate ? trip.startDate.split('T')[0] : '',
+                status: trip.status || 'À faire',
+                startMileage: trip.startMileage || 0,
+                endMileage: trip.endMileage || 0,
+                fuelVolumeAdded: trip.fuelVolumeAdded || 0,
+                notes: trip.notes || ''
+            });
         } else {
             setCurrentTrip(null);
-            setFormData({ driver: '', truck: '', trailer: '', route: '', date: '', status: 'To Do' });
+            setFormData({
+                driverId: '',
+                truckId: '',
+                trailerId: '',
+                departureLocation: '',
+                arrivalLocation: '',
+                startDate: '',
+                status: 'À faire',
+                startMileage: 0,
+                endMileage: 0,
+                fuelVolumeAdded: 0,
+                notes: ''
+            });
         }
         setIsModalOpen(true);
     };
 
-    const handleDelete = (trip) => {
+    const handleDelete = async (trip) => {
         if (window.confirm('Are you sure you want to delete this trip?')) {
-            setTrips(trips.filter(t => t.id !== trip.id));
+            try {
+                await tripService.delete(trip._id);
+                await fetchTrips();
+            } catch (err) {
+                console.error('Error deleting trip:', err);
+                alert('Failed to delete trip');
+            }
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (currentTrip) {
-            setTrips(trips.map(t => t.id === currentTrip.id ? { ...formData, id: t.id } : t));
-        } else {
-            setTrips([...trips, { ...formData, id: Date.now() }]);
+        try {
+            if (currentTrip) {
+                await tripService.update(currentTrip._id, formData);
+            } else {
+                await tripService.create(formData);
+            }
+            setIsModalOpen(false);
+            await fetchTrips();
+        } catch (err) {
+            console.error('Error saving trip:', err);
+            const errorMessage = err.response?.data?.message || 'Failed to save trip';
+            alert(errorMessage);
         }
-        setIsModalOpen(false);
     };
 
-    const generatePDF = () => {
-        const doc = new jsPDF();
-        doc.text("Trip Report", 20, 10);
-        trips.forEach((trip, index) => {
-            doc.text(`${index + 1}. ${trip.route} (${trip.driver}) - ${trip.status}`, 20, 20 + (index * 10));
-        });
-        doc.save("trips.pdf");
+    const handleDownloadPDF = async (tripId) => {
+        try {
+            const blob = await tripService.downloadPDF(tripId);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `mission-${tripId}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Error downloading PDF:', err);
+            alert('Failed to download PDF');
+        }
     };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-white text-lg">Loading trips...</div>
+            </div>
+        );
+    }
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-white">Trip Management</h1>
-                <div className="space-x-3">
-                    <button
-                        onClick={generatePDF}
-                        className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-colors"
-                    >
-                        <FontAwesomeIcon icon={faFilePdf} className="mr-2" />
-                        Export PDF
-                    </button>
+            <div className="flex justify-between items-center mb-8">
+                <div>
+                    <h1 className="text-3xl font-display font-bold text-white mb-1">
+                        {isAdmin ? 'Trips Management' : 'My Trips'}
+                    </h1>
+                    <p className="text-zinc-400 text-sm">
+                        {isAdmin ? 'Manage all fleet trips' : 'View and manage your assigned trips'}
+                    </p>
+                </div>
+                {isAdmin && (
                     <button
                         onClick={() => handleOpenModal()}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-colors"
+                        className="px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2"
                     >
-                        <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                        <FontAwesomeIcon icon={faPlus} />
                         New Trip
                     </button>
-                </div>
+                )}
             </div>
+
+            {error && (
+                <div className="bg-error-500/10 border border-error-500/50 text-error-400 p-4 rounded-xl mb-6 text-sm">
+                    {error}
+                </div>
+            )}
 
             <Table
                 columns={columns}
                 data={trips}
-                onEdit={handleOpenModal}
-                onDelete={handleDelete}
+                onEdit={isAdmin ? handleOpenModal : undefined}
+                onDelete={isAdmin ? handleDelete : undefined}
             />
 
-            <Modal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                title={currentTrip ? 'Edit Trip' : 'Create New Trip'}
-            >
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Driver</label>
-                        <input
-                            type="text"
-                            value={formData.driver}
-                            onChange={(e) => setFormData({ ...formData, driver: e.target.value })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                            required
-                        />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+            {isAdmin && (
+                <Modal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    title={currentTrip ? 'Edit Trip' : 'Create New Trip'}
+                >
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Truck</label>
+                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Assign Driver</label>
+                            <select
+                                value={formData.driverId}
+                                onChange={(e) => setFormData({ ...formData, driverId: e.target.value })}
+                                className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                required
+                            >
+                                <option value="">Select Driver</option>
+                                {drivers.map(driver => (
+                                    <option key={driver._id} value={driver._id}>
+                                        {driver.firstName} {driver.lastName} - {driver.email}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-zinc-300 mb-2">Truck</label>
+                                <select
+                                    value={formData.truckId}
+                                    onChange={(e) => setFormData({ ...formData, truckId: e.target.value })}
+                                    className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                    required
+                                >
+                                    <option value="">Select Truck</option>
+                                    {trucks.map(truck => (
+                                        <option key={truck._id} value={truck._id}>
+                                            {truck.licensePlate} - {truck.make} {truck.model}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-zinc-300 mb-2">Trailer</label>
+                                <select
+                                    value={formData.trailerId}
+                                    onChange={(e) => setFormData({ ...formData, trailerId: e.target.value })}
+                                    className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                    required
+                                >
+                                    <option value="">Select Trailer</option>
+                                    {trailers.map(trailer => (
+                                        <option key={trailer._id} value={trailer._id}>
+                                            {trailer.licensePlate} - {trailer.make} {trailer.model}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-zinc-300 mb-2">Departure Location</label>
+                                <input
+                                    type="text"
+                                    value={formData.departureLocation}
+                                    onChange={(e) => setFormData({ ...formData, departureLocation: e.target.value })}
+                                    className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-zinc-300 mb-2">Arrival Location</label>
+                                <input
+                                    type="text"
+                                    value={formData.arrivalLocation}
+                                    onChange={(e) => setFormData({ ...formData, arrivalLocation: e.target.value })}
+                                    className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Departure Date</label>
                             <input
-                                type="text"
-                                value={formData.truck}
-                                onChange={(e) => setFormData({ ...formData, truck: e.target.value })}
-                                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                                type="date"
+                                value={formData.startDate}
+                                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Trailer</label>
-                            <input
-                                type="text"
-                                value={formData.trailer}
-                                onChange={(e) => setFormData({ ...formData, trailer: e.target.value })}
-                                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                                required
+                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Status</label>
+                            <select
+                                value={formData.status}
+                                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                            >
+                                <option value="À faire">À faire</option>
+                                <option value="En cours">En cours</option>
+                                <option value="Terminée">Terminée</option>
+                                <option value="Annulé">Annulé</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Notes</label>
+                            <textarea
+                                value={formData.notes}
+                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                rows="3"
                             />
                         </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Route</label>
-                        <input
-                            type="text"
-                            value={formData.route}
-                            onChange={(e) => setFormData({ ...formData, route: e.target.value })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Date</label>
-                        <input
-                            type="date"
-                            value={formData.date}
-                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                            required
-                        />
-                    </div>
-                    <div className="flex justify-end pt-4">
-                        <button
-                            type="button"
-                            onClick={() => setIsModalOpen(false)}
-                            className="mr-3 px-4 py-2 text-gray-400 hover:text-white transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-colors"
-                        >
-                            Save
-                        </button>
-                    </div>
-                </form>
-            </Modal>
+                        <div className="flex justify-end gap-3 pt-6 border-t border-white/5">
+                            <button
+                                type="button"
+                                onClick={() => setIsModalOpen(false)}
+                                className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl border border-white/10 hover:border-white/20 transition-all duration-200"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-200 hover:-translate-y-0.5"
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+            )}
         </div>
     );
 };
