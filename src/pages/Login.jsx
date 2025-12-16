@@ -109,25 +109,9 @@ const Login = () => {
                     </button>
                 </form>
 
-                {/* Demo Credentials */}
-                <div className="mt-8 text-center text-xs text-zinc-500 border-t border-white/5 pt-6">
-                    <p className="mb-3 font-semibold text-zinc-400">First Time Setup:</p>
-                    <div className="flex flex-col gap-2 text-left bg-primary-500/5 border border-primary-500/20 rounded-lg p-4">
-                        <p className="text-zinc-300 mb-2">You need to register a user first. Use the backend API:</p>
-                        <code className="text-xs text-primary-400 font-mono bg-black/30 p-2 rounded">
-                            POST http://localhost:3000/api/register
-                        </code>
-                        <p className="text-zinc-400 text-xs mt-2">Body (JSON):</p>
-                        <code className="text-xs text-zinc-300 font-mono bg-black/30 p-2 rounded whitespace-pre">
-                            {`{
-  "firstName": "Admin",
-  "lastName": "User",
-  "email": "admin@logifleet.com",
-  "password": "admin@logifleet.com",
-  "role": "Admin"
-}`}
-                        </code>
-                    </div>
+                {/* Info */}
+                <div className="mt-8 text-center text-xs text-zinc-400 border-t border-white/5 pt-6">
+                    <p>Sign in with your LogiFleet credentials</p>
                 </div>
             </div>
         </div>
