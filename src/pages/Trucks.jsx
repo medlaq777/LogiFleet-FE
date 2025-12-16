@@ -20,7 +20,6 @@ const Trucks = () => {
         status: 'Disponible'
     });
 
-    // Fetch trucks on component mount
     useEffect(() => {
         fetchTrucks();
     }, []);
@@ -29,7 +28,6 @@ const Trucks = () => {
         try {
             setLoading(true);
             const response = await truckService.getAll();
-            // Backend returns { success: true, data: [...] }
             setTrucks(response.data);
             setError('');
         } catch (err) {
@@ -108,7 +106,7 @@ const Trucks = () => {
                 await truckService.create(formData);
             }
             setIsModalOpen(false);
-            await fetchTrucks(); // Refresh list
+            await fetchTrucks();
         } catch (err) {
             console.error('Error saving truck:', err);
             const errorMessage = err.response?.data?.message || 'Failed to save truck';
