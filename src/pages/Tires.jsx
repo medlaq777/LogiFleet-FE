@@ -26,8 +26,8 @@ const Tires = () => {
     const fetchTires = async () => {
         try {
             setLoading(true);
-            const data = await tireService.getAll();
-            setTires(data);
+            const response = await tireService.getAll();
+            setTires(response.data);
             setError('');
         } catch (err) {
             console.error('Error fetching tires:', err);
@@ -108,7 +108,8 @@ const Tires = () => {
             await fetchTires();
         } catch (err) {
             console.error('Error saving tire:', err);
-            alert('Failed to save tire');
+            const errorMessage = err.response?.data?.message || 'Failed to save tire';
+            alert(errorMessage);
         }
     };
 

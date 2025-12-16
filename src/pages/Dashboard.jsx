@@ -171,7 +171,9 @@ const AdminDashboard = () => (
 
 const Dashboard = () => {
     const { user } = useAuth();
-    return user?.role === 'driver' ? <DriverDashboard user={user} /> : <AdminDashboard />;
+    // Backend returns role as "Admin" or "Driver" (capitalized)
+    const isDriver = user?.role?.toLowerCase() === 'driver';
+    return isDriver ? <DriverDashboard user={user} /> : <AdminDashboard />;
 };
 
 export default Dashboard;

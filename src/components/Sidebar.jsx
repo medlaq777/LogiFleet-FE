@@ -28,7 +28,9 @@ const Sidebar = ({ isOpen, onClose }) => {
         { path: '/', icon: faRoute, label: 'My Trips' },
     ];
 
-    const links = user?.role === 'admin' ? adminLinks : driverLinks;
+    // Backend returns role as "Admin" or "Driver" (capitalized)
+    const isAdmin = user?.role?.toLowerCase() === 'admin';
+    const links = isAdmin ? adminLinks : driverLinks;
 
     return (
         <>
@@ -88,10 +90,14 @@ const Sidebar = ({ isOpen, onClose }) => {
                     {/* User Profile Card */}
                     <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-[#13131A] to-[#1C1C24] border border-white/5">
                         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shadow-lg shadow-primary-500/20">
-                            {user?.name?.charAt(0)}
+                            {user?.firstName?.charAt(0) || user?.email?.charAt(0)}
                         </div>
                         <div className="overflow-hidden flex-1">
-                            <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
+                            <p className="text-sm font-semibold text-white truncate">
+                                {user?.firstName && user?.lastName
+                                    ? `${user.firstName} ${user.lastName}`
+                                    : user?.email}
+                            </p>
                             <p className="text-xs text-zinc-400 capitalize truncate">{user?.role}</p>
                         </div>
                     </div>

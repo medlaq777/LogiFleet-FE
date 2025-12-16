@@ -28,8 +28,9 @@ const Trucks = () => {
     const fetchTrucks = async () => {
         try {
             setLoading(true);
-            const data = await truckService.getAll();
-            setTrucks(data);
+            const response = await truckService.getAll();
+            // Backend returns { success: true, data: [...] }
+            setTrucks(response.data);
             setError('');
         } catch (err) {
             console.error('Error fetching trucks:', err);
@@ -110,7 +111,8 @@ const Trucks = () => {
             await fetchTrucks(); // Refresh list
         } catch (err) {
             console.error('Error saving truck:', err);
-            alert('Failed to save truck');
+            const errorMessage = err.response?.data?.message || 'Failed to save truck';
+            alert(errorMessage);
         }
     };
 

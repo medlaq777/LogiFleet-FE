@@ -26,8 +26,8 @@ const Trailers = () => {
     const fetchTrailers = async () => {
         try {
             setLoading(true);
-            const data = await trailerService.getAll();
-            setTrailers(data);
+            const response = await trailerService.getAll();
+            setTrailers(response.data);
             setError('');
         } catch (err) {
             console.error('Error fetching trailers:', err);
@@ -105,7 +105,8 @@ const Trailers = () => {
             await fetchTrailers();
         } catch (err) {
             console.error('Error saving trailer:', err);
-            alert('Failed to save trailer');
+            const errorMessage = err.response?.data?.message || 'Failed to save trailer';
+            alert(errorMessage);
         }
     };
 
