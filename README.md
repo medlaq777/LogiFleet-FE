@@ -1,16 +1,74 @@
-# React + Vite
+# LogiFleet FrontEnd
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive frontend application for the LogiFleet system, built with modern web technologies to provide a dynamic and responsive user experience.
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is built using the following key technologies:
 
-## React Compiler
+- **[React](https://react.dev/)** (powered by **[Vite](https://vitejs.dev/)**) - For building the user interface.
+- **[TailwindCSS](https://tailwindcss.com/)** - For rapid and modern styling.
+- **[React Router DOM](https://reactrouter.com/)** - For seamless client-side routing.
+- **[Chart.js](https://www.chartjs.org/)** & **[react-chartjs-2](https://react-chartjs-2.js.org/)** - For interactive data visualization.
+- **[Axios](https://axios-http.com/)** - For making HTTP requests to the backend.
+- **[FontAwesome](https://fontawesome.com/)** - For scalable vector icons.
+- **[jsPDF](https://github.com/parallax/jsPDF)** - For generating PDF documents on the client side.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Prerequisites
 
-## Expanding the ESLint configuration
+Before getting started, ensure you have the following installed:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Node.js** (v16 or higher recommended)
+- **npm** (comes with Node.js)
+
+## 📦 Installation
+
+1.  **Clone the repository** (if not already present):
+    ```bash
+    git clone <repository-url>
+    cd LogiFleet/FrontEnd
+    ```
+
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+
+## 📜 Available Scripts
+
+In the project directory, you can run:
+
+### `npm run dev`
+Runs the app in the development mode.\
+Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+
+### `npm run build`
+Builds the app for production to the `dist` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+### `npm run lint`
+Runs ESLint to analyze the code for potential errors and style violations.
+
+### `npm run preview`
+Locally previews the production build.
+
+## 📂 Project Structure
+
+A quick look at the top-level files and directories you'll see in the `src` folder:
+
+- **`assets/`**: Static assets like images and global styles.
+- **`components/`**: Reusable UI components (buttons, cards, inputs, etc.).
+- **`config/`**: Configuration files and constants.
+- **`context/`**: React Context API providers for global state management.
+- **`layouts/`**: Layout components that define the page structure.
+- **`pages/`**: Individual page components mapped to routes.
+- **`services/`**: API service functions for communicating with the backend.
+- **`App.jsx`**: The main application component.
+- **`main.jsx`**: The entry point of the React application.
+
+---
+
+*Generated for LogiFleet FrontEnd*
