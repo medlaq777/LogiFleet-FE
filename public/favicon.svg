@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#logoGradient)"/>
+  
+  <!-- Truck Icon (Simplified) -->
+  <g transform="translate(25, 30)">
+    <!-- Truck Body -->
+    <rect x="0" y="10" width="35" height="20" fill="white" rx="2"/>
+    <!-- Truck Cab -->
+    <rect x="35" y="5" width="15" height="25" fill="white" rx="2"/>
+    <!-- Front Window -->
+    <rect x="37" y="8" width="11" height="8" fill="#2563EB" rx="1"/>
+    <!-- Cargo Lines -->
+    <line x1="5" y1="15" x2="30" y2="15" stroke="#2563EB" stroke-width="1.5"/>
+    <line x1="5" y1="20" x2="30" y2="20" stroke="#2563EB" stroke-width="1.5"/>
+    <line x1="5" y1="25" x2="30" y2="25" stroke="#2563EB" stroke-width="1.5"/>
+    <!-- Wheels -->
+    <circle cx="12" cy="32" r="4" fill="#1D4ED8"/>
+    <circle cx="12" cy="32" r="2" fill="white"/>
+    <circle cx="38" cy="32" r="4" fill="#1D4ED8"/>
+    <circle cx="38" cy="32" r="2" fill="white"/>
+  </g>
+</svg>
