@@ -25,7 +25,7 @@ Before getting started, ensure you have the following installed:
 
 1.  **Clone the repository** (if not already present):
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/medlaq777/LogiFleet-FE
     cd LogiFleet/FrontEnd
     ```
 
