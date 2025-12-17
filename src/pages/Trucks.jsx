@@ -138,33 +138,33 @@ const Trucks = () => {
     }
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-8">
+        <div className="animate-fade-in">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-display font-bold text-white mb-1">
-                        Trucks Management <span className="text-xl text-primary-500 font-normal">({totalItems} Trucks)</span>
+                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                        Trucks Management <span className="text-lg text-primary-400 font-medium">({totalItems})</span>
                     </h1>
-                    <p className="text-zinc-400 text-sm">Manage your fleet vehicles</p>
+                    <p className="text-zinc-400">Manage and monitor your fleet vehicles</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2"
+                    className="btn-primary"
                 >
                     <FontAwesomeIcon icon={faPlus} />
-                    Add Truck
+                    Add New Truck
                 </button>
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <div className="relative flex-1">
+            {/* Search Bar */}
+            <div className="mb-6">
+                <div className="relative max-w-md">
                     <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
                     <input
                         type="text"
-                        placeholder="Search trucks..."
+                        placeholder="Search by license plate, make, or model..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-[#13131A] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-primary-500 transition-colors"
+                        className="input-field pl-11 w-full"
                     />
                 </div>
             </div>
@@ -195,58 +195,62 @@ const Trucks = () => {
                 onClose={() => setIsModalOpen(false)}
                 title={currentTruck ? 'Edit Truck' : 'Add New Truck'}
             >
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                        <label className="block text-sm font-semibold text-zinc-300 mb-2">License Plate</label>
+                        <label className="input-label">License Plate</label>
                         <input
                             type="text"
                             value={formData.licensePlate}
                             onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value })}
-                            className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                            className="input-field"
+                            placeholder="e.g., ABC-1234"
                             required
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Make</label>
+                            <label className="input-label">Make</label>
                             <input
                                 type="text"
                                 value={formData.make}
                                 onChange={(e) => setFormData({ ...formData, make: e.target.value })}
-                                className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                className="input-field"
+                                placeholder="e.g., Volvo"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Model</label>
+                            <label className="input-label">Model</label>
                             <input
                                 type="text"
                                 value={formData.model}
                                 onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                                className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                className="input-field"
+                                placeholder="e.g., FH16"
                                 required
                             />
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Capacity (tons)</label>
+                            <label className="input-label">Capacity (tons)</label>
                             <input
                                 type="number"
                                 value={formData.capacity}
                                 onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                                className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                className="input-field"
+                                placeholder="e.g., 25"
                                 min="1"
                                 max="1000"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Fuel Type</label>
+                            <label className="input-label">Fuel Type</label>
                             <select
                                 value={formData.fuelType}
                                 onChange={(e) => setFormData({ ...formData, fuelType: e.target.value })}
-                                className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                                className="select-field"
                             >
                                 <option value="Diesel">Diesel</option>
                                 <option value="Essence">Essence</option>
@@ -255,30 +259,30 @@ const Trucks = () => {
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-semibold text-zinc-300 mb-2">Status</label>
+                        <label className="input-label">Status</label>
                         <select
                             value={formData.status}
                             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                            className="w-full px-4 py-3 bg-[#1C1C24] border border-white/10 rounded-xl text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                            className="select-field"
                         >
                             <option value="Disponible">Disponible</option>
                             <option value="En service">En service</option>
                             <option value="En Maintenance">En Maintenance</option>
                         </select>
                     </div>
-                    <div className="flex justify-end gap-3 pt-6 border-t border-white/5">
+                    <div className="flex justify-end gap-3 pt-6 border-t border-white/[0.08]">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl border border-white/10 hover:border-white/20 transition-all duration-200"
+                            className="btn-secondary"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-200 hover:-translate-y-0.5"
+                            className="btn-primary"
                         >
-                            Save
+                            {currentTruck ? 'Update Truck' : 'Add Truck'}
                         </button>
                     </div>
                 </form>

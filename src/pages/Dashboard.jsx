@@ -2,30 +2,35 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FuelChart, MaintenanceChart } from '../components/Charts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTruck, faTrailer, faRing, faGasPump, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faTruck, faTrailer, faRing, faRoute, faArrowUp, faArrowDown, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import reportService from '../services/report.service';
 import Trips from './Trips';
 
 const StatCard = ({ title, value, icon, color, trend }) => (
-    <div className="premium-card p-6 hover:shadow-premium hover:border-white/10 transition-all duration-300 group relative overflow-hidden">
-        <div className="flex justify-between items-start mb-4">
-            <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                <FontAwesomeIcon icon={icon} className="text-xl text-white" />
-            </div>
-            {trend && (
-                <div className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${trend > 0
-                    ? 'bg-success-500/10 text-success-400 border border-success-500/20'
-                    : 'bg-error-500/10 text-error-400 border border-error-500/20'
-                    }`}>
-                    <FontAwesomeIcon icon={trend > 0 ? faArrowUp : faArrowDown} />
-                    {Math.abs(trend)}%
-                </div>
-            )}
-        </div>
+    <div className="premium-card p-6 hover:shadow-premium hover:border-white/[0.12] transition-all duration-300 group relative overflow-hidden">
+        {/* Background Glow Effect */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
 
-        <div>
-            <h3 className="text-4xl font-bold text-white mb-1 tracking-tight">{value}</h3>
-            <p className="text-sm text-zinc-400 font-medium">{title}</p>
+        <div className="relative z-10">
+            <div className="flex justify-between items-start mb-5">
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <FontAwesomeIcon icon={icon} className="text-xl text-white" />
+                </div>
+                {trend && (
+                    <div className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1.5 rounded-full ${trend > 0
+                        ? 'bg-success-500/10 text-success-400 border border-success-500/20'
+                        : 'bg-error-500/10 text-error-400 border border-error-500/20'
+                        }`}>
+                        <FontAwesomeIcon icon={trend > 0 ? faArrowUp : faArrowDown} className="text-[10px]" />
+                        {Math.abs(trend)}%
+                    </div>
+                )}
+            </div>
+
+            <div>
+                <h3 className="text-4xl font-bold text-white mb-2 tracking-tight">{value}</h3>
+                <p className="text-sm text-zinc-400 font-medium">{title}</p>
+            </div>
         </div>
     </div>
 );
@@ -54,45 +59,55 @@ const AdminDashboard = () => {
     }, []);
 
     return (
-        <div>
+        <div className="animate-fade-in">
+            {/* Page Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-display font-bold text-white mb-2">Dashboard Overview</h1>
-                <p className="text-zinc-400">Welcome back, here's what's happening with your fleet today.</p>
+                <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary-600/10 flex items-center justify-center">
+                        <FontAwesomeIcon icon={faTachometerAlt} className="text-primary-400" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl md:text-4xl font-bold text-white">Dashboard Overview</h1>
+                    </div>
+                </div>
+                <p className="text-zinc-400 ml-13">Welcome back! Here's what's happening with your fleet today.</p>
             </div>
 
+            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <StatCard
                     title="Total Trucks"
                     value={stats.totalTrucks || 0}
                     icon={faTruck}
-                    color="from-primary-500 to-primary-600 shadow-primary-500/50"
+                    color="from-primary-600 to-primary-700"
                 />
                 <StatCard
                     title="Total Trailers"
                     value={stats.totalTrailers || 0}
                     icon={faTrailer}
-                    color="from-success-500 to-success-600 shadow-success-500/50"
+                    color="from-success-600 to-success-700"
                 />
                 <StatCard
                     title="Active Trips"
                     value={stats.activeTrips || 0}
-                    icon={faGasPump}
-                    color="from-accent-500 to-accent-600 shadow-accent-500/50"
+                    icon={faRoute}
+                    color="from-warning-600 to-warning-700"
                 />
                 <StatCard
                     title="Maintenance Alerts"
                     value={stats.maintenanceAlerts || stats.pendingMaintenance || 0}
                     icon={faRing}
-                    color="from-error-500 to-error-600 shadow-error-500/50"
+                    color="from-error-600 to-error-700"
                 />
             </div>
 
+            {/* Charts Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="premium-card p-8 min-h-[24rem] flex flex-col">
-                    <h3 className="text-xl font-display font-semibold text-white mb-8 flex items-center gap-3">
-                        <div className="w-2 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full"></div>
-                        Fuel Consumption Trend
-                    </h3>
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="w-1 h-8 bg-gradient-to-b from-primary-600 to-primary-700 rounded-full"></div>
+                        <h3 className="text-xl font-bold text-white">Fuel Consumption Trend</h3>
+                    </div>
                     <div className="flex-1 w-full flex items-center justify-center relative">
                         <FuelChart
                             labels={stats.fuelChart?.labels}
@@ -100,11 +115,12 @@ const AdminDashboard = () => {
                         />
                     </div>
                 </div>
+
                 <div className="premium-card p-8 min-h-[24rem] flex flex-col">
-                    <h3 className="text-xl font-display font-semibold text-white mb-8 flex items-center gap-3">
-                        <div className="w-2 h-8 bg-gradient-to-b from-accent-500 to-accent-600 rounded-full"></div>
-                        Maintenance Cost Distribution
-                    </h3>
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="w-1 h-8 bg-gradient-to-b from-warning-600 to-warning-700 rounded-full"></div>
+                        <h3 className="text-xl font-bold text-white">Maintenance Cost Distribution</h3>
+                    </div>
                     <div className="flex-1 w-full flex items-center justify-center relative">
                         <MaintenanceChart
                             labels={stats.maintenanceChart?.labels}
