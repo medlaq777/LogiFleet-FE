@@ -68,7 +68,3 @@ A quick look at the top-level files and directories you'll see in the `src` fold
 - **`services/`**: API service functions for communicating with the backend.
 - **`App.jsx`**: The main application component.
 - **`main.jsx`**: The entry point of the React application.
-
----
-
-*Generated for LogiFleet FrontEnd*
