@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FuelChart, MaintenanceChart } from '../components/Charts';
+import { FuelChart, MaintenanceChart } from '../components/common/Charts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faTrailer, faRing, faRoute, faArrowUp, faArrowDown, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import reportService from '../services/report.service';

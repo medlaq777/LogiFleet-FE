@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import Table from '../components/Table';
-import Modal from '../components/Modal';
+import Table from '../components/common/Table';
+import Modal from '../components/common/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faFilePdf, faSearch, faPlay, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import Pagination from '../components/Pagination';
+import Pagination from '../components/common/Pagination';
 import tripService from '../services/trip.service';
 import truckService from '../services/truck.service';
 import trailerService from '../services/trailer.service';

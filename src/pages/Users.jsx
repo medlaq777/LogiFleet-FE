@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import userService from '../services/user.service';
-import Modal from '../components/Modal';
-import Table from '../components/Table';
-import Pagination from '../components/Pagination';
+import Modal from '../components/common/Modal';
+import Table from '../components/common/Table';
+import Pagination from '../components/common/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faUserShield, faUserTie, faSearch } from '@fortawesome/free-solid-svg-icons';
 
@@ -138,8 +138,8 @@ const Users = () => {
             render: (user) => (
                 <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${user.role === 'Admin'
-                            ? 'bg-gradient-to-br from-accent-500 to-accent-600 text-white'
-                            : 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
+                        ? 'bg-gradient-to-br from-accent-500 to-accent-600 text-white'
+                        : 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
                         }`}>
                         {user.firstName?.charAt(0).toUpperCase()}
                     </div>
@@ -159,8 +159,8 @@ const Users = () => {
             accessor: 'role',
             render: (user) => (
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full border flex w-fit items-center ${user.role === 'Admin'
-                        ? 'bg-accent-500/10 text-accent-400 border-accent-500/20'
-                        : 'bg-primary-500/10 text-primary-400 border-primary-500/20'
+                    ? 'bg-accent-500/10 text-accent-400 border-accent-500/20'
+                    : 'bg-primary-500/10 text-primary-400 border-primary-500/20'
                     }`}>
                     <FontAwesomeIcon icon={user.role === 'Admin' ? faUserShield : faUserTie} className="mr-1.5" />
                     {user.role}
@@ -206,8 +206,8 @@ const Users = () => {
                                 setCurrentPage(1); // Reset to page 1 on filter change
                             }}
                             className={`px-4 py-2 rounded-xl border transition-all duration-200 ${roleFilter === role
-                                    ? 'bg-primary-500 text-white border-primary-500'
-                                    : 'bg-transparent text-zinc-400 border-white/10 hover:border-white/20 hover:text-white'
+                                ? 'bg-primary-500 text-white border-primary-500'
+                                : 'bg-transparent text-zinc-400 border-white/10 hover:border-white/20 hover:text-white'
                                 }`}
                         >
                             {role}

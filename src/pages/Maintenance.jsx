@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faEdit, faSearch } from '@fortawesome/free-solid-svg-icons';
-import Table from '../components/Table';
-import Modal from '../components/Modal';
-import Pagination from '../components/Pagination';
+import Table from '../components/common/Table';
+import Modal from '../components/common/Modal';
+import Pagination from '../components/common/Pagination';
 import maintenanceService from '../services/maintenance.service';
 
 const Maintenance = () => {

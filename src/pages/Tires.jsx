@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Table from '../components/Table';
-import Modal from '../components/Modal';
-import Pagination from '../components/Pagination';
+import Table from '../components/common/Table';
+import Modal from '../components/common/Modal';
+import Pagination from '../components/common/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import tireService from '../services/tire.service';
