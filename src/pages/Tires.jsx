@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Table from '../components/common/Table';
-import Modal from '../components/common/Modal';
-import Pagination from '../components/common/Pagination';
+import Table from '../components/Table';
+import Modal from '../components/Modal';
+import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import tireService from '../services/tire.service';
@@ -154,7 +154,7 @@ const Tires = () => {
                 </button>
             </div>
 
-            {/* Filters */}
+
             <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="relative flex-1">
                     <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />

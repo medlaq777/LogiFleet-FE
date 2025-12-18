@@ -10,21 +10,21 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             onClick={onClose}
         >
             <div
-                className="premium-card w-full max-w-lg animate-scale-in"
+                className="bg-[#1A1F2E] border border-zinc-800 rounded-xl w-full max-w-lg animate-scale-in"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Header */}
+
                 <div className="flex items-center justify-between p-6 border-b border-white/[0.08]">
                     <h3 className="text-xl font-bold text-white">{title}</h3>
                     <button
                         onClick={onClose}
-                        className="btn-icon"
+                        className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
                     >
                         <FontAwesomeIcon icon={faTimes} className="text-xl" />
                     </button>
                 </div>
 
-                {/* Content */}
+
                 <div className="p-6">
                     {children}
                 </div>

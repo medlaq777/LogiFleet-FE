@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FuelChart, MaintenanceChart } from '../components/common/Charts';
+import { FuelChart, MaintenanceChart } from '../components/Charts';
+import Modal from '../components/Modal';
+import Table from '../components/Table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faTrailer, faRing, faRoute, faArrowUp, faArrowDown, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import reportService from '../services/report.service';
 import Trips from './Trips';
 
 const StatCard = ({ title, value, icon, color, trend }) => (
-    <div className="premium-card p-6 hover:shadow-premium hover:border-white/[0.12] transition-all duration-300 group relative overflow-hidden">
-        {/* Background Glow Effect */}
+    <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-6 hover:border-white/10 transition-all duration-300 group relative overflow-hidden">
+
         <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
 
         <div className="relative z-10">
@@ -60,7 +62,7 @@ const AdminDashboard = () => {
 
     return (
         <div className="animate-fade-in">
-            {/* Page Header */}
+
             <div className="mb-8">
                 <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-xl bg-primary-600/10 flex items-center justify-center">
@@ -73,7 +75,7 @@ const AdminDashboard = () => {
                 <p className="text-zinc-400 ml-13">Welcome back! Here's what's happening with your fleet today.</p>
             </div>
 
-            {/* Stats Grid */}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <StatCard
                     title="Total Trucks"
@@ -101,9 +103,9 @@ const AdminDashboard = () => {
                 />
             </div>
 
-            {/* Charts Grid */}
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="premium-card p-8 min-h-[24rem] flex flex-col">
+                <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-8 min-h-[24rem] flex flex-col">
                     <div className="flex items-center gap-3 mb-8">
                         <div className="w-1 h-8 bg-gradient-to-b from-primary-600 to-primary-700 rounded-full"></div>
                         <h3 className="text-xl font-bold text-white">Fuel Consumption Trend</h3>
@@ -116,7 +118,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="premium-card p-8 min-h-[24rem] flex flex-col">
+                <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-8 min-h-[24rem] flex flex-col">
                     <div className="flex items-center gap-3 mb-8">
                         <div className="w-1 h-8 bg-gradient-to-b from-warning-600 to-warning-700 rounded-full"></div>
                         <h3 className="text-xl font-bold text-white">Maintenance Cost Distribution</h3>
@@ -135,7 +137,7 @@ const AdminDashboard = () => {
 
 const Dashboard = () => {
     const { user } = useAuth();
-    // Backend returns role as "Admin" or "Driver" (capitalized)
+
     const isDriver = user?.role?.toLowerCase() === 'driver';
     return isDriver ? <Trips /> : <AdminDashboard />;
 };

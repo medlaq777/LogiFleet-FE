@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from './api.config';
 
-// Create axios instance with default config
+
 const apiClient = axios.create({
     baseURL: config.BASE_URL,
     headers: {
@@ -9,7 +9,7 @@ const apiClient = axios.create({
     },
 });
 
-// Request interceptor - Add JWT token to all requests
+
 apiClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -23,23 +23,23 @@ apiClient.interceptors.request.use(
     }
 );
 
-// Response interceptor - Handle errors globally
+
 apiClient.interceptors.response.use(
     (response) => {
         return response;
     },
     (error) => {
-        // Handle 401 Unauthorized - Token expired or invalid
+
         if (error.response?.status === 401) {
             window.dispatchEvent(new Event('auth:unauthorized'));
         }
 
-        // Handle 403 Forbidden
+
         if (error.response?.status === 403) {
             console.error('Access forbidden');
         }
 
-        // Handle network errors
+
         if (!error.response) {
             console.error('Network error - please check your connection');
         }

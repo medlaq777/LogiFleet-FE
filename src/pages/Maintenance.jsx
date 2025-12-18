@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faEdit, faSearch } from '@fortawesome/free-solid-svg-icons';
-import Table from '../components/common/Table';
-import Modal from '../components/common/Modal';
-import Pagination from '../components/common/Pagination';
+import Table from '../components/Table';
+import Modal from '../components/Modal';
+import Pagination from '../components/Pagination';
 import maintenanceService from '../services/maintenance.service';
 
 const Maintenance = () => {
@@ -27,8 +27,8 @@ const Maintenance = () => {
     });
 
     useEffect(() => {
-        setCurrentPage(1); // Reset page when tab changes
-        setSearchTerm(''); // Reset search
+        setCurrentPage(1);
+        setSearchTerm('');
     }, [activeTab]);
 
     useEffect(() => {
@@ -188,7 +188,7 @@ const Maintenance = () => {
                 </button>
             </div>
 
-            {/* Search Filter - Only for Alerts */}
+
             {activeTab === 'alerts' && (
                 <div className="flex flex-col md:flex-row gap-4 mb-6">
                     <div className="relative flex-1">
@@ -223,7 +223,7 @@ const Maintenance = () => {
             {activeTab === 'alerts' && (
                 <div>
                     {filteredAlerts.length === 0 ? (
-                        <div className="premium-card p-8 text-center text-zinc-400">
+                        <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-8 text-center text-zinc-400">
                             <FontAwesomeIcon icon={faExclamationTriangle} className="text-4xl mb-3 text-zinc-500" />
                             <p>No maintenance alerts at this time</p>
                         </div>

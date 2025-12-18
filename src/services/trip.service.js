@@ -1,7 +1,6 @@
 import apiClient from '../config/axios';
 
 const tripService = {
-    // Get all trips (Admin only)
     getAll: async (page = 1, limit = 10) => {
         const response = await apiClient.get('/trips', {
             params: { page, limit }
@@ -9,13 +8,11 @@ const tripService = {
         return response.data;
     },
 
-    // Get driver's trips (Driver only)
     getMyTrips: async () => {
         const response = await apiClient.get('/trip');
         return response.data;
     },
 
-    // Get single trip by ID
     getById: async (id) => {
         const response = await apiClient.get(`/trip/${id}`);
         return response.data;
@@ -36,10 +33,9 @@ const tripService = {
         return response.data;
     },
 
-    // Download mission order PDF
     downloadPDF: async (id) => {
         const response = await apiClient.get(`/trip/${id}/pdf`, {
-            responseType: 'blob', // Important for file download
+            responseType: 'blob',
         });
         return response.data;
     },

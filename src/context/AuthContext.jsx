@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check local storage for existing session
+
         const storedUser = localStorage.getItem('user');
         const token = localStorage.getItem('token');
 
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         }
         setLoading(false);
 
-        // Listen for unauthorized events (401 from axios)
+
         const handleUnauthorized = () => {
             logout();
             navigate('/login');
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await authService.login(email, password);
 
-            // Store token and user data
+
             localStorage.setItem('token', response.token);
             localStorage.setItem('user', JSON.stringify(response.user));
             setUser(response.user);

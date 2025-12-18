@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
@@ -8,22 +8,8 @@ import Trailers from './pages/Trailers';
 import Tires from './pages/Tires';
 import Trips from './pages/Trips';
 import Maintenance from './pages/Maintenance';
-import MainLayout from './layouts/MainLayout';
-import { AuthProvider, useAuth } from './context/AuthContext';
-
-const ProtectedRoute = ({ role }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
-  if (!user) return <Navigate to="/login" />;
-  if (role && user.role !== role) return <Navigate to="/" />;
-
-  return (
-    <MainLayout>
-      <Outlet />
-    </MainLayout>
-  );
-};
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -31,8 +17,6 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-
-          {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
@@ -44,7 +28,7 @@ function App() {
 
           </Route>
 
-          {/* Admin Only Routes */}
+
           <Route element={<ProtectedRoute role="Admin" />}>
             <Route path="/users" element={<Users />} />
           </Route>

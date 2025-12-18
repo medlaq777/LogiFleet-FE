@@ -24,7 +24,7 @@ ChartJS.register(
     ArcElement
 );
 
-// Common chart options for premium styling
+
 const commonOptions = {
     responsive: true,
     maintainAspectRatio: true,

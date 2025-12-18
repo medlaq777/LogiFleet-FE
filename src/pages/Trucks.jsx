@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Table from '../components/common/Table';
-import Modal from '../components/common/Modal';
-import Pagination from '../components/common/Pagination';
+import Table from '../components/Table';
+import Modal from '../components/Modal';
+import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import truckService from '../services/truck.service';
@@ -148,14 +148,14 @@ const Trucks = () => {
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="btn-primary"
+                    className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                     <FontAwesomeIcon icon={faPlus} />
                     Add New Truck
                 </button>
             </div>
 
-            {/* Search Bar */}
+
             <div className="mb-6">
                 <div className="relative max-w-md">
                     <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
@@ -164,7 +164,7 @@ const Trucks = () => {
                         placeholder="Search by license plate, make, or model..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="input-field pl-11 w-full"
+                        className="w-full px-4 py-3 bg-[#11141F] border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors pl-11"
                     />
                 </div>
             </div>
@@ -197,35 +197,35 @@ const Trucks = () => {
             >
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                        <label className="input-label">License Plate</label>
+                        <label className="block text-sm font-medium text-zinc-300 mb-1.5">License Plate</label>
                         <input
                             type="text"
                             value={formData.licensePlate}
                             onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value })}
-                            className="input-field"
+                            className="w-full px-4 py-3 bg-[#11141F] border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                             placeholder="e.g., ABC-1234"
                             required
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="input-label">Make</label>
+                            <label className="block text-sm font-medium text-zinc-300 mb-1.5">Make</label>
                             <input
                                 type="text"
                                 value={formData.make}
                                 onChange={(e) => setFormData({ ...formData, make: e.target.value })}
-                                className="input-field"
+                                className="w-full px-4 py-3 bg-[#11141F] border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                                 placeholder="e.g., Volvo"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="input-label">Model</label>
+                            <label className="block text-sm font-medium text-zinc-300 mb-1.5">Model</label>
                             <input
                                 type="text"
                                 value={formData.model}
                                 onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                                className="input-field"
+                                className="w-full px-4 py-3 bg-[#11141F] border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                                 placeholder="e.g., FH16"
                                 required
                             />
@@ -233,12 +233,12 @@ const Trucks = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="input-label">Capacity (tons)</label>
+                            <label className="block text-sm font-medium text-zinc-300 mb-1.5">Capacity (tons)</label>
                             <input
                                 type="number"
                                 value={formData.capacity}
                                 onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                                className="input-field"
+                                className="w-full px-4 py-3 bg-[#11141F] border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                                 placeholder="e.g., 25"
                                 min="1"
                                 max="1000"
@@ -246,11 +246,11 @@ const Trucks = () => {
                             />
                         </div>
                         <div>
-                            <label className="input-label">Fuel Type</label>
+                            <label className="block text-sm font-medium text-zinc-300 mb-1.5">Fuel Type</label>
                             <select
                                 value={formData.fuelType}
                                 onChange={(e) => setFormData({ ...formData, fuelType: e.target.value })}
-                                className="select-field"
+                                className="w-full px-4 py-3 bg-[#11141F] border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors cursor-pointer"
                             >
                                 <option value="Diesel">Diesel</option>
                                 <option value="Essence">Essence</option>
@@ -259,11 +259,11 @@ const Trucks = () => {
                         </div>
                     </div>
                     <div>
-                        <label className="input-label">Status</label>
+                        <label className="block text-sm font-medium text-zinc-300 mb-1.5">Status</label>
                         <select
                             value={formData.status}
                             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                            className="select-field"
+                            className="w-full px-4 py-3 bg-[#11141F] border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors cursor-pointer"
                         >
                             <option value="Disponible">Disponible</option>
                             <option value="En service">En service</option>
@@ -274,13 +274,13 @@ const Trucks = () => {
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="btn-secondary"
+                            className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white font-medium rounded-lg transition-colors border border-zinc-700"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="btn-primary"
+                            className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                         >
                             {currentTruck ? 'Update Truck' : 'Add Truck'}
                         </button>

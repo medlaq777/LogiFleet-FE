@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import userService from '../services/user.service';
-import Modal from '../components/common/Modal';
-import Table from '../components/common/Table';
-import Pagination from '../components/common/Pagination';
+import Modal from '../components/Modal';
+import Table from '../components/Table';
+import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faUserShield, faUserTie, faSearch } from '@fortawesome/free-solid-svg-icons';
 
@@ -14,13 +14,13 @@ const Users = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('All');
 
-    // Pagination State
+
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
     const [totalItems, setTotalItems] = useState(0);
 
-    // Form State
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -31,14 +31,14 @@ const Users = () => {
 
     useEffect(() => {
         fetchUsers();
-    }, [currentPage, roleFilter]); // Refetch when page or filter changes
+    }, [currentPage, roleFilter]);
 
     const fetchUsers = async () => {
         try {
             setLoading(true);
             const response = await userService.getAll(currentPage, itemsPerPage, roleFilter === 'All' ? '' : roleFilter);
 
-            // Expected response from User Controller: { success: true, count: 123, data: [...] }
+
             if (response.success || response.data) {
                 const data = response.data || [];
                 const count = response.count || response.total || 0;
@@ -69,7 +69,7 @@ const Users = () => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                password: '', // Don't show password
+                password: '',
                 role: user.role
             });
         } else {
@@ -89,12 +89,12 @@ const Users = () => {
         e.preventDefault();
         try {
             if (currentUser) {
-                // Update
+
                 const updateData = { ...formData };
-                if (!updateData.password) delete updateData.password; // Don't send empty password
+                if (!updateData.password) delete updateData.password;
                 await userService.update(currentUser._id, updateData);
             } else {
-                // Create
+
                 await userService.create(formData);
             }
             setIsModalOpen(false);
@@ -117,14 +117,14 @@ const Users = () => {
         }
     };
 
-    // Filter frontend search results separately since backend might not support partial search on all fields via API yet
-    // OR ideally update backend to support search. For now, let's filter the CURRENT PAGE data or rely on backend if possible.
-    // Given the current setup, standard is to filter locally if data set is small, or pass search param.
-    // The previous implementation filtered locally. Since we are doing pagination, local filtering only works on the current page.
-    // To properly support search with pagination, we should add a search param to API.
-    // For this specific request "make it as list table", I'll stick to local filtering of the *fetched* data for search, 
-    // but really we should probably ask the backend to search.
-    // However, to keep it simple and robust without changing backend search logic too much right now:
+
+
+
+
+
+
+
+
     const filteredUsers = users.filter(user => {
         return (user.firstName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
             (user.lastName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
@@ -134,12 +134,12 @@ const Users = () => {
     const columns = [
         {
             header: 'User',
-            accessor: 'firstName', // Fallback
+            accessor: 'firstName',
             render: (user) => (
                 <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${user.role === 'Admin'
-                        ? 'bg-gradient-to-br from-accent-500 to-accent-600 text-white'
-                        : 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-primary-600 text-white'
                         }`}>
                         {user.firstName?.charAt(0).toUpperCase()}
                     </div>
@@ -178,14 +178,14 @@ const Users = () => {
                 </div>
                 <button
                     onClick={() => openModal()}
-                    className="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 transition-all duration-200 flex items-center gap-2"
+                    className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl flex items-center gap-2"
                 >
                     <FontAwesomeIcon icon={faPlus} />
                     Add User
                 </button>
             </div>
 
-            {/* Filters */}
+
             <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="relative flex-1">
                     <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
@@ -203,7 +203,7 @@ const Users = () => {
                             key={role}
                             onClick={() => {
                                 setRoleFilter(role);
-                                setCurrentPage(1); // Reset to page 1 on filter change
+                                setCurrentPage(1);
                             }}
                             className={`px-4 py-2 rounded-xl border transition-all duration-200 ${roleFilter === role
                                 ? 'bg-primary-500 text-white border-primary-500'
@@ -216,7 +216,7 @@ const Users = () => {
                 </div>
             </div>
 
-            {/* Table View */}
+
             {loading ? (
                 <div className="flex justify-center py-12">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
