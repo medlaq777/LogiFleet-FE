@@ -40,7 +40,7 @@ const Users = () => {
 
 
             if (response.success || response.data) {
-                const data = response.data || [];
+                const data = response.data;
                 const count = response.count || response.total || 0;
                 setUsers(data);
                 setTotalItems(count);
