@@ -65,10 +65,10 @@ const Trips = () => {
                 ? await tripService.getAll(currentPage, limit)
                 : await tripService.getMyTrips();
 
-            setTrips(response.data || []);
-            setTotalItems(response.count || 0);
+            setTrips(response.data);
+            setTotalItems(response.count);
             if (isAdmin) {
-                setTotalPages(Math.ceil((response.count || 0) / limit));
+                setTotalPages(Math.ceil((response.count) / limit));
             }
             setError("");
         } catch (err) {
@@ -87,9 +87,9 @@ const Trips = () => {
                 trailerService.getAll(),
                 userService.getDrivers(),
             ]);
-            setTrucks(trucksRes.data || []);
-            setTrailers(trailersRes.data || []);
-            setDrivers(driversRes.data || []);
+            setTrucks(trucksRes.data);
+            setTrailers(trailersRes.data);
+            setDrivers(driversRes.data);
         } catch (err) {
             console.error("Error fetching trucks/trailers:", err);
         }
@@ -104,7 +104,6 @@ const Trips = () => {
                 try {
                     const tripDetails = await tripService.getById(tripId);
                     const trip = tripDetails.data || tripDetails;
-                    console.log("Full trip details:", trip);
                     startMileage =
                         trip.startMileage ||
                         trip.mileageStart ||
@@ -118,10 +117,7 @@ const Trips = () => {
                         typeof trip.truckId === "object" &&
                         trip.truckId.mileage
                     ) {
-                        console.log(
-                            "Using truck mileage as start mileage:",
-                            trip.truckId.mileage
-                        );
+                        
                         startMileage = trip.truckId.mileage;
                     }
 

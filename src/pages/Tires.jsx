@@ -33,9 +33,9 @@ const Tires = () => {
         try {
             setLoading(true);
             const response = await tireService.getAll(currentPage, limit);
-            setTires(response.data || []);
-            setTotalItems(response.count || 0);
-            setTotalPages(Math.ceil((response.count || 0) / limit));
+            setTires(response.data);
+            setTotalItems(response.count);
+            setTotalPages(Math.ceil((response.count) / limit));
             setError('');
         } catch (err) {
             console.error('Error fetching tires:', err);
