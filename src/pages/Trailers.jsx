@@ -33,9 +33,9 @@ const Trailers = () => {
         try {
             setLoading(true);
             const response = await trailerService.getAll(currentPage, limit);
-            setTrailers(response.data || []);
-            setTotalItems(response.count || 0);
-            setTotalPages(Math.ceil((response.count || 0) / limit));
+            setTrailers(response.data);
+            setTotalItems(response.count);
+            setTotalPages(Math.ceil((response.count) / limit));
             setError('');
         } catch (err) {
             console.error('Error fetching trailers:', err);
