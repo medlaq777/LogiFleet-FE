@@ -11,11 +11,11 @@ import Trips from './Trips';
 const StatCard = ({ title, value, icon, color, trend }) => (
     <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-6 hover:border-white/10 transition-all duration-300 group relative overflow-hidden">
 
-        <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+        <div className={`absolute inset-0 bg-linear-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
 
         <div className="relative z-10">
             <div className="flex justify-between items-start mb-5">
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-14 h-14 rounded-xl bg-linear-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     <FontAwesomeIcon icon={icon} className="text-xl text-white" />
                 </div>
                 {trend && (
@@ -105,9 +105,9 @@ const AdminDashboard = () => {
 
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-8 min-h-[24rem] flex flex-col">
+                <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-8 min-h-24rem flex flex-col">
                     <div className="flex items-center gap-3 mb-8">
-                        <div className="w-1 h-8 bg-gradient-to-b from-primary-600 to-primary-700 rounded-full"></div>
+                        <div className="w-1 h-8 bg-linear-to-b from-primary-600 to-primary-700 rounded-full"></div>
                         <h3 className="text-xl font-bold text-white">Fuel Consumption Trend</h3>
                     </div>
                     <div className="flex-1 w-full flex items-center justify-center relative">
@@ -118,9 +118,9 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-8 min-h-[24rem] flex flex-col">
+                <div className="bg-[#1A1F2E] border border-zinc-800 rounded-xl p-8 min-h-24rem flex flex-col">
                     <div className="flex items-center gap-3 mb-8">
-                        <div className="w-1 h-8 bg-gradient-to-b from-warning-600 to-warning-700 rounded-full"></div>
+                        <div className="w-1 h-8 bg-linear-to-b from-warning-600 to-warning-700 rounded-full"></div>
                         <h3 className="text-xl font-bold text-white">Maintenance Cost Distribution</h3>
                     </div>
                     <div className="flex-1 w-full flex items-center justify-center relative">

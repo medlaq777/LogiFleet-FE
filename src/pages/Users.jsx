@@ -321,7 +321,7 @@ const Users = () => {
                         </button>
                         <button
                             type="submit"
-                            className="px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 transition-all duration-200"
+                            className="px-5 py-2.5 bg-linear-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 transition-all duration-200"
                         >
                             {currentUser ? 'Update User' : 'Create User'}
                         </button>

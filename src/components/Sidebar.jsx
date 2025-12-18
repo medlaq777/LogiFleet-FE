@@ -71,12 +71,12 @@ const Sidebar = ({ isOpen, onClose }) => {
 
 
             <div className={`
-                fixed inset-y-0 left-0 z-30 w-72 bg-[#0B0E1A] border-r border-white/[0.08] transform transition-transform duration-300 ease-out flex flex-col
+                fixed inset-y-0 left-0 z-30 w-72 bg-[#0B0E1A] border-r border-white/0.08 transform transition-transform duration-300 ease-out flex flex-col
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                 md:translate-x-0 md:static md:inset-0
             `}>
 
-                <div className="h-20 flex-shrink-0 flex items-center px-6 border-b border-white/10 bg-[#11141F]">
+                <div className="h-20 shrink-0 flex items-center px-6 border-b border-white/10 bg-[#11141F]">
                     <div className="w-11 h-11 rounded-xl bg-primary-600 flex items-center justify-center mr-3">
                         <FontAwesomeIcon icon={faTruck} className="text-white text-lg" />
                     </div>
@@ -126,8 +126,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                 </nav>
 
 
-                <div className="p-4 border-t border-white/[0.08] bg-[#0B0E1A]">
-                    <Link to="/profile" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.06] transition-all duration-200 group cursor-pointer mb-2">
+                <div className="p-4 border-t border-white/0.08 bg-[#0B0E1A]">
+                    <Link to="/profile" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/0.06 transition-all duration-200 group cursor-pointer mb-2">
                         <div className="w-10 h-10 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-zinc-400 font-bold group-hover:border-primary-500/50 group-hover:text-white transition-all duration-200">
                             {user?.firstName?.charAt(0) || user?.email?.charAt(0)}
                         </div>

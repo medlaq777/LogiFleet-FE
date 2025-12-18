@@ -49,7 +49,7 @@ const Navbar = ({ onMenuClick }) => {
 
             <div className="flex items-center gap-4">
 
-                <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08]">
+                <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0.03 border border-white/0.08">
                     <div className="text-right">
                         <p className="text-xs text-zinc-500 font-medium">{formatDate(currentTime)}</p>
                         <p className="text-sm text-white font-semibold">{formatTime(currentTime)}</p>

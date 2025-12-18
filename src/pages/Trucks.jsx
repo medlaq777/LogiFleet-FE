@@ -270,7 +270,7 @@ const Trucks = () => {
                             <option value="En Maintenance">En Maintenance</option>
                         </select>
                     </div>
-                    <div className="flex justify-end gap-3 pt-6 border-t border-white/[0.08]">
+                    <div className="flex justify-end gap-3 pt-6 border-t border-white/0.08">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}

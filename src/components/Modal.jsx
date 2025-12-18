@@ -14,7 +14,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                 onClick={(e) => e.stopPropagation()}
             >
 
-                <div className="flex items-center justify-between p-6 border-b border-white/[0.08]">
+                <div className="flex items-center justify-between p-6 border-b border-white/0.08">
                     <h3 className="text-xl font-bold text-white">{title}</h3>
                     <button
                         onClick={onClose}
